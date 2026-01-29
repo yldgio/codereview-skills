@@ -23,6 +23,9 @@ npx skills add https://github.com/yldgio/anomalyco --skill docker --skill terraf
 | `nextjs` | Next.js App Router patterns, RSC, data fetching, and performance |
 | `react` | React patterns, hooks, state management, and performance optimization |
 | `angular` | Angular architecture, RxJS patterns, change detection, and best practices |
+| `vercel-react-best-practices` | 57 React/Next.js performance rules from Vercel Labs |
+| `vercel-composition-patterns` | React composition patterns and component design from Vercel |
+| `web-design-guidelines` | UI/UX accessibility audit and design best practices from Vercel |
 
 ### Backend
 
@@ -41,6 +44,12 @@ npx skills add https://github.com/yldgio/anomalyco --skill docker --skill terraf
 | `bicep` | Azure Bicep patterns, parameterization, modules, and security |
 | `github-actions` | GitHub Actions workflows, reusable actions, and CI/CD patterns |
 | `azure-devops` | Azure Pipelines, templates, stages, and deployment strategies |
+
+### Testing
+
+| Skill | Description |
+|-------|-------------|
+| `webapp-testing` | Playwright testing patterns and E2E best practices from Anthropic |
 
 ## Usage
 

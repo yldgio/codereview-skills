@@ -1,5 +1,7 @@
 # Anomalyco Agent Skills
 
+> **Note:** All provided skills in this repository are explicitly designed for usage during code reviews.
+
 A curated collection of agent skills for AI coding assistants. Skills provide specialized knowledge for code review, development best practices, and infrastructure patterns.
 
 ## Installation

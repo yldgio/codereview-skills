@@ -47,7 +47,7 @@ Maintainers can run a scheduled workflow to generate improvement suggestions:
 - Workflow: `.github/workflows/skill-review-report.yml`
 - Script: `scripts/generate_skill_review_report.py`
 - Output PR: `skill-review-report` branch with `reports/skill-review-report.md`
-- Secrets: `GH_MODELS_TOKEN` (or `GITHUB_TOKEN` fallback) with `models:read`
+- Secrets: `GH_MODELS_TOKEN` (PAT or fine-grained token with access to GitHub Models, e.g. `models:read`)
 - Manual runs support overrides for model ID and max skills
 
 ## Development Workflow

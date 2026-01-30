@@ -22,6 +22,28 @@ def build_prompt(skill_name: str, content: str) -> str:
     )
 
 
+def parse_max_skills(raw_value: str | None) -> int:
+    if raw_value is None or raw_value.strip() == "":
+        return 50
+
+    try:
+        value = int(raw_value)
+    except ValueError:
+        raise SystemExit(
+            "Invalid MAX_SKILLS value. Expected a positive integer, got: "
+            f"{raw_value!r}"
+        )
+
+    if value <= 0:
+        raise SystemExit(
+            "Invalid MAX_SKILLS value. Expected a positive integer, got: "
+            f"{raw_value!r}"
+        )
+
+    # Hard cap to avoid excessive model usage.
+    return min(value, 50)
+
+
 def call_model(*, token: str, model_id: str, prompt: str) -> str:
     payload = {
         "model": model_id,
@@ -45,6 +67,11 @@ def call_model(*, token: str, model_id: str, prompt: str) -> str:
             data = json.loads(resp.read().decode("utf-8"))
         return data["choices"][0]["message"]["content"].strip()
     except error.HTTPError as e:
+        if e.code in (401, 403):
+            raise SystemExit(
+                f"GitHub Models authentication failed (HTTP {e.code}). "
+                "Check GH_MODELS_TOKEN."
+            )
         return f"- ❗ Model call failed (HTTP {e.code})."
     except Exception as e:
         return f"- ❗ Model call failed: {type(e).__name__}: {e}"
@@ -52,23 +79,29 @@ def call_model(*, token: str, model_id: str, prompt: str) -> str:
 
 def main() -> None:
     model_id = os.getenv("MODEL_ID", "openai/gpt-4.1")
-    max_skills = int(os.getenv("MAX_SKILLS", "50"))
-    token = os.getenv("GH_MODELS_TOKEN") or os.getenv("GITHUB_TOKEN")
+    max_skills = parse_max_skills(os.getenv("MAX_SKILLS"))
+    token = os.getenv("GH_MODELS_TOKEN")
 
     if not token:
-        raise SystemExit("Missing GH_MODELS_TOKEN or GITHUB_TOKEN.")
+        raise SystemExit("Missing GH_MODELS_TOKEN.")
 
     skill_paths = sorted(glob("skills/**/SKILL.md", recursive=True))
     total_skills = len(skill_paths)
     skill_paths = skill_paths[:max_skills]
 
+    failure_count = 0
     sections: list[str] = []
     for path in skill_paths:
         skill_name = Path(path).parent.name
         content = Path(path).read_text(encoding="utf-8")
         suggestions = call_model(token=token, model_id=model_id, prompt=build_prompt(skill_name, content))
+        if suggestions.startswith("- ❗"):
+            failure_count += 1
         sections.append(f"## {skill_name}\n\n{suggestions}\n")
         time.sleep(0.5)
+
+    if skill_paths and failure_count == len(skill_paths):
+        raise SystemExit("All GitHub Models calls failed; aborting to avoid updating the report PR.")
 
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     header = [

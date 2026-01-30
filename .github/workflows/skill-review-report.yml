@@ -32,7 +32,6 @@ jobs:
       - name: Generate report
         env:
           GH_MODELS_TOKEN: ${{ secrets.GH_MODELS_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MAX_SKILLS: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.max_skills || '50' }}
           MODEL_ID: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.model_id || 'openai/gpt-4.1' }}
         run: python scripts/generate_skill_review_report.py

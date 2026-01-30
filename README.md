@@ -128,7 +128,7 @@ This repository includes a scheduled GitHub Actions workflow that generates a co
 - Script: `scripts/generate_skill_review_report.py`
 - Schedule: weekly (Monday 09:00 UTC) + manual trigger
 - Output: `reports/skill-review-report.md` in branch `skill-review-report`
-- Required secret: `GH_MODELS_TOKEN` (fallback to `GITHUB_TOKEN`)
+- Required secret (for model calls): `GH_MODELS_TOKEN` (PAT or fine-grained token with access to GitHub Models, e.g. `models:read`)
 
 ## License
 

@@ -54,6 +54,6 @@ Define a repeatable (weekly) implementation via GitHub Actions that:
 - Workflow permissions: `contents: write`, `pull-requests: write`.
 
 ## Risks & mitigations
-- **PR/issue spam** → deduplication based on label/branch/issue title.
+- **PR/issue spam** → deduplication via fixed PR branch/title (and consistent issue title when enabled).
 - **LLM credentials** → use secrets and limit token scope.
 - **LLM costs** → limit the number of skills per run or use batching.

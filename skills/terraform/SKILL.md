@@ -10,6 +10,9 @@ description: Terraform IaC patterns, state management, security, and modular des
 - Group related resources logically
 - Use `terraform.tfvars` for environment-specific values (never commit secrets)
 - Keep `*.tfstate` files out of version control
+- Add inline comments to clarify complex logic
+- Document non-obvious resource relationships
+- Use comments to explain why specific configurations are used
 
 ### Variables
 - Declare all variables in `variables.tf`
@@ -26,6 +29,9 @@ description: Terraform IaC patterns, state management, security, and modular des
 - Enable encryption at rest for storage resources
 - Apply least privilege IAM policies
 - Use private subnets and security groups appropriately
+- Implement secret rotation mechanisms where supported
+- Review and plan for secret/key rotation lifecycle
+- Use cloud provider secret rotation features
 
 ### State Management
 - Use remote state backends (S3, Azure Blob, GCS, Terraform Cloud)
@@ -40,6 +46,10 @@ description: Terraform IaC patterns, state management, security, and modular des
 - Use outputs to expose necessary values
 - Document module inputs and outputs
 - Follow module structure: `main.tf`, `variables.tf`, `outputs.tf`, `README.md`
+- Review module sources for security and trustworthiness
+- Audit third-party modules before use
+- Check module license compatibility
+- Prefer official/verified modules from trusted sources
 
 ### Resource Naming
 - Use consistent naming conventions
@@ -55,6 +65,12 @@ description: Terraform IaC patterns, state management, security, and modular des
 - Use `locals` for computed values and reduce repetition
 - Use `depends_on` only when implicit dependencies aren't sufficient
 - Pin provider versions in `required_providers` block
+- Use static analysis tools (e.g., `tflint`, `checkov`) for quality and security
+- Implement automated testing with `terraform test` or similar
+- Detect and mitigate infrastructure drift with `terraform plan`
+- Use lifecycle rules (`create_before_destroy`, `prevent_destroy`) appropriately
+- Prevent data loss with `prevent_destroy` on critical resources
+- Use `create_before_destroy` to avoid downtime during updates
 
 ### Outputs
 - Output only values needed by other configurations

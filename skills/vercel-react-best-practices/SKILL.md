@@ -21,6 +21,22 @@ Reference these guidelines when:
 - Refactoring existing React/Next.js code
 - Optimizing bundle size or load times
 
+## Understanding the Rules
+
+Each rule includes:
+- **Name**: Identifier for the optimization pattern
+- **Description**: Concise explanation of what the rule addresses
+- **Code Examples**: Showing incorrect (before) and correct (after) implementations
+- **Impact Level**: Priority rating to guide optimization efforts
+
+### Rule Enforcement
+
+When reviewing code:
+- **Critical rules**: Must be addressed immediately (waterfalls, bundle bloat)
+- **High rules**: Should be fixed in current PR if feasible
+- **Medium rules**: Note for future optimization or current work if easy
+- **Low rules**: Consider for dedicated performance optimization efforts
+
 ## Rule Categories by Priority
 
 | Priority | Category | Impact | Prefix |
@@ -116,3 +132,51 @@ Reference these guidelines when:
 - `advanced-event-handler-refs` - Store event handlers in refs
 - `advanced-init-once` - Initialize app once per app load
 - `advanced-use-latest` - useLatest for stable callback refs
+
+## Additional Best Practices
+
+### Accessibility (a11y)
+
+Ensure performance optimizations don't compromise accessibility:
+- Lazy loading must not break keyboard navigation
+- Dynamic imports should maintain focus management
+- Animations should respect `prefers-reduced-motion`
+- Loading states should be announced to screen readers
+- Use semantic HTML even when optimizing for performance
+
+### Testing and Error Boundaries
+
+Integrate performance with reliability:
+- Test code coverage after refactoring for performance
+- Implement error boundaries around Suspense boundaries
+- Test lazy-loaded components in isolation
+- Validate that optimizations don't break functionality
+- Monitor error rates after performance changes
+
+### Next.js Rendering Modes
+
+Choose appropriate rendering strategy:
+- **SSG (Static)**: For content that rarely changes
+- **ISR (Incremental Static)**: For content with predictable update patterns
+- **SSR (Server-Side)**: For personalized or real-time content
+- **CSR (Client-Side)**: For highly interactive, user-specific data
+- Document rendering mode choices in code comments
+
+### State Management and Context
+
+Optimize React context usage:
+- Split contexts by update frequency
+- Use context selectors to minimize re-renders
+- Consider external stores (Zustand, Jotai) for global state
+- Avoid prop drilling by using composition patterns
+- Keep context providers close to consumers
+
+### Monitoring and Profiling
+
+Measure performance impact:
+- Use React DevTools Profiler for component performance
+- Monitor Core Web Vitals (LCP, FID, CLS)
+- Track bundle size changes in CI/CD
+- Set performance budgets for routes
+- Profile before and after optimizations
+- Use Lighthouse CI for automated performance checks

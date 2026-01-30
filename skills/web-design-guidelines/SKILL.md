@@ -20,6 +20,62 @@ Review files for compliance with Web Interface Guidelines.
 3. Check against all rules in the fetched guidelines
 4. Output findings in the terse `file:line` format
 
+### Output Format
+
+Report violations in this format:
+```
+file:line - [RULE_ID] Brief description of violation
+```
+
+Include:
+- File path and line number
+- Rule identifier for reference
+- Severity level (Critical, High, Medium, Low)
+- Brief recommendation for remediation
+
+Example:
+```
+src/Button.tsx:42 - [A11Y-001] HIGH: Missing aria-label on button
+src/Form.tsx:18 - [FORMS-003] MEDIUM: Consider adding autocomplete attribute
+```
+
+### File Handling
+
+- **HTML/JSX/TSX files**: Apply all UI/accessibility rules
+- **CSS/SCSS files**: Apply styling and animation rules
+- **JavaScript/TypeScript files**: Apply interaction and performance rules
+- **Irrelevant files** (config, build scripts): Skip silently
+- Report when encountering unexpected file types
+
+### Guideline Caching
+
+- Fetch guidelines at the start of each review session
+- Cache for the duration of the session
+- Refetch if cache is >24 hours old
+- Document cache timestamp in review summary
+
+### Error Handling
+
+When guideline fetch fails:
+- Log the error clearly
+- Use fallback to last known good guidelines if available
+- Notify user of degraded review capability
+- Suggest manual review or retry
+
+When guideline data is malformed:
+- Log parsing errors
+- Skip invalid rules
+- Continue with valid rules
+- Report incomplete review to user
+
+### Extensibility
+
+Allow customization of guidelines:
+- Support local override file (`.web-guidelines.json`)
+- Merge custom rules with fetched guidelines
+- Allow disabling specific rules via config
+- Document custom rules in review output
+
 ## Guidelines Source
 
 Fetch fresh guidelines before each review:
@@ -53,3 +109,20 @@ If no files specified, ask the user which files to review.
 - **Dark Mode & Theming** - color-scheme, theme-color meta
 - **Touch & Interaction** - touch-action, tap-highlight
 - **Locale & i18n** - Intl.DateTimeFormat, Intl.NumberFormat
+
+## Rule Documentation
+
+When reporting violations, provide:
+- Brief explanation of why the rule matters
+- Link to detailed documentation when available
+- Example of correct implementation
+- Estimated effort to fix (Quick, Medium, Complex)
+
+Example with explanation:
+```
+src/Modal.tsx:28 - [A11Y-005] HIGH: Modal missing focus trap
+  Why: Users using keyboard navigation can escape modal unexpectedly
+  Fix: Add focus trap with @headlessui/react or similar
+  Effort: Medium
+  Docs: https://web.dev/focus-trapping
+```

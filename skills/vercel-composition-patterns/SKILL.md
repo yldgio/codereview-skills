@@ -22,6 +22,35 @@ Reference these guidelines when:
 - Reviewing component architecture
 - Working with compound components or context providers
 
+## Code Review Criteria
+
+When reviewing code, check for:
+
+- **Boolean prop proliferation**: Components with >3 boolean props for variants/modes
+- **Render props**: Use of `renderX` props instead of `children` composition
+- **Direct state access**: Components accessing context/state outside provider pattern
+- **Tightly coupled logic**: UI components with embedded business logic
+- **Missing accessibility**: Compound components without proper ARIA attributes
+
+### Migration Guidance
+
+When refactoring legacy patterns:
+
+- **From render props to composition**: Replace `renderHeader={() => <Header />}` with `<Component.Header />`
+- **From boolean flags to variants**: Convert `<Button primary large />` to `<Button variant="primary" size="large" />`
+- **From prop drilling to composition**: Extract shared state into context provider
+- **React 19 migration**: Remove `forwardRef` wrappers, replace `useContext` with `use()`
+
+### Accessibility
+
+Ensure composition patterns maintain accessibility:
+
+- Compound components must preserve semantic HTML relationships
+- ARIA attributes should propagate through composition layers
+- Keyboard navigation must work across component boundaries
+- Screen reader announcements should be logical and complete
+- Focus management must be handled correctly in nested components
+
 ## Rule Categories by Priority
 
 | Priority | Category                | Impact | Prefix          |
@@ -54,6 +83,19 @@ Reference these guidelines when:
 > **React 19+ only.** Skip this section if using React 18 or earlier.
 
 - `react19-no-forwardref` - Don't use `forwardRef`; use `use()` instead of `useContext()`
+- `react19-use-api` - Use `use()` hook for promises and context (replaces `useContext`)
+- `react19-actions` - Use Server Actions and form actions for data mutations
+- `react19-suspense-updates` - Leverage improved Suspense for data fetching patterns
+
+### Performance Implications
+
+Consider performance when using composition patterns:
+
+- **Render optimization**: Memoize compound component children to prevent unnecessary re-renders
+- **Context splitting**: Split context into multiple contexts to minimize re-renders
+- **Provider placement**: Place providers as low in tree as possible
+- **State colocation**: Keep state close to where it's used
+- **Composition overhead**: Balance flexibility with render performance
 
 ## Example: Avoid Boolean Props
 
@@ -93,5 +135,57 @@ interface ContextValue<T> {
   state: T;
   actions: Actions;
   meta: { loading: boolean; error: Error | null };
+}
+```
+
+## Example: Explicit Variants (Detailed)
+
+### Before: Boolean Props
+
+```tsx
+// Harder to maintain as props grow
+<Button primary large disabled loading icon="check" />
+```
+
+### After: Explicit Variants
+
+```tsx
+// Clearer intent, easier to extend
+<Button variant="primary" size="large" disabled>
+  <Button.Icon name="check" />
+  <Button.Loader />
+  Submit
+</Button>
+```
+
+## Example: State/Context Pattern
+
+### Provider Implementation
+
+```tsx
+// Provider knows implementation details
+function TodoProvider({ children }) {
+  const [todos, setTodos] = useState([]);
+  
+  const value = {
+    state: todos,
+    actions: {
+      add: (todo) => setTodos([...todos, todo]),
+      remove: (id) => setTodos(todos.filter(t => t.id !== id))
+    },
+    meta: { loading: false, error: null }
+  };
+  
+  return <TodoContext.Provider value={value}>{children}</TodoContext.Provider>;
+}
+```
+
+### Consumer Implementation
+
+```tsx
+// Consumer uses generic interface
+function TodoList() {
+  const { state: todos, actions } = use(TodoContext);
+  return todos.map(todo => <TodoItem key={todo.id} {...todo} onRemove={actions.remove} />);
 }
 ```

@@ -49,6 +49,7 @@ Maintainers can run a scheduled workflow to generate improvement suggestions:
 - Output PR: `skill-review-report` branch with `reports/skill-review-report.md`
 - Secrets: `GH_MODELS_TOKEN` (PAT or fine-grained token with access to GitHub Models, e.g. `models:read`)
 - Manual runs support overrides for model ID and max skills
+- Note: `max_skills` overrides are capped at 50; if a higher value is provided, the script truncates it to 50.
 
 ## Development Workflow
 

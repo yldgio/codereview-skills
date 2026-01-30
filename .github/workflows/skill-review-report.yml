@@ -1,0 +1,62 @@
+name: Skill Review Report
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+    inputs:
+      max_skills:
+        description: "Max skills to process"
+        required: false
+        default: "50"
+      model_id:
+        description: "Model ID for GitHub Models"
+        required: false
+        default: "openai/gpt-4.1"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: skill-review-report
+  cancel-in-progress: false
+
+jobs:
+  generate-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Generate report
+        env:
+          GH_MODELS_TOKEN: ${{ secrets.GH_MODELS_TOKEN }}
+          MAX_SKILLS: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.max_skills || '50' }}
+          MODEL_ID: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.model_id || 'openai/gpt-4.1' }}
+        run: python scripts/generate_skill_review_report.py
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: skill-review-report
+          path: reports/skill-review-report.md
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: skill-review-report
+          title: "chore: weekly skill review report"
+          commit-message: "chore: update skill review report"
+          body: |
+            Automated weekly skill review report.
+
+            - Source: GitHub Actions schedule
+            - Model: `${{ github.event_name == 'workflow_dispatch' && github.event.inputs.model_id || 'openai/gpt-4.1' }}`
+          add-paths: |
+            reports/skill-review-report.md

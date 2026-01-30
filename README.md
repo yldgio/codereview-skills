@@ -102,12 +102,21 @@ cp -r /tmp/anomalyco/skills/docker .claude/skills/
 
 ## Contributing
 
-Contributions are welcome! Please follow these guidelines:
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines on:
 
-1. Each skill must have a `SKILL.md` with valid YAML frontmatter
-2. Include `name` and `description` in frontmatter
-3. Organize rules by priority/category
-4. Provide concrete examples where helpful
+- Development workflow and branching strategy
+- Pull request process and review criteria
+- Skill creation guidelines and best practices
+- Branch protection rules and merge requirements
+
+**Quick Start:**
+1. Fork the repository
+2. Create a branch: `git checkout -b skill/your-skill-name`
+3. Follow skill format in [AGENTS.md](AGENTS.md)
+4. Submit a PR with clear description
+5. Address review feedback
+
+For questions, open a GitHub Discussion or Issue.
 
 ## License
 

@@ -37,3 +37,41 @@ description: Angular component architecture, RxJS patterns, change detection, an
 - Avoid `bypassSecurityTrust*` unless absolutely necessary
 - Validate route parameters and query strings
 - Use Angular's built-in CSRF protection with HttpClient
+
+### Testing
+- Use `@angular/testing` utilities (TestBed, ComponentFixture)
+- Write unit tests for components, services, and pipes
+- Mock dependencies in tests (don't use real HTTP calls)
+- Test component inputs/outputs and DOM interactions
+- Use `async` and `fakeAsync` for testing asynchronous code
+
+### Type Safety
+- Enable strict TypeScript mode in tsconfig.json
+- Use `strictTemplates: true` in Angular compiler options
+- Avoid `any` type - use proper interfaces/types
+- Type all function parameters and return values
+
+### Accessibility
+- Use semantic HTML elements (e.g., `<button>` not `<div>` with click)
+- Include ARIA labels and roles where needed
+- Ensure keyboard navigation works for interactive elements
+- Test with screen readers and accessibility tools
+- Maintain proper heading hierarchy (h1, h2, h3)
+
+### State Management
+- Use NgRx or Akita for complex shared state
+- Signals (Angular 16+) for reactive local state
+- Services with BehaviorSubject for simple shared state
+- Avoid component state for data shared across routes
+
+### Internationalization
+- Use Angular i18n for localization
+- Mark translatable text with `i18n` attribute
+- Extract translations with `ng extract-i18n`
+- Serve locale-specific builds or use runtime translation
+
+### Linting and Code Style
+- Use ESLint with @angular-eslint rules
+- Follow Angular style guide conventions
+- Use Prettier for consistent code formatting
+- Enable editor support for automatic linting/formatting

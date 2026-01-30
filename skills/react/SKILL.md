@@ -39,3 +39,46 @@ description: React component patterns, hooks best practices, state management, a
 - Avoid `useEffect` for state derivation (compute during render instead)
 - Avoid `useEffect` on mount for data that could be fetched server-side
 - Avoid index as key in lists that reorder
+
+### Testing
+- Write unit tests for components using React Testing Library
+- Test custom hooks with `@testing-library/react-hooks`
+- Test user interactions and state changes
+- Mock external dependencies appropriately
+- Test error states and edge cases
+- Ensure tests are maintainable and readable
+
+### Error Handling
+- Implement error boundaries for components
+- Provide fallback UIs for errors
+- Handle async errors appropriately
+- Log errors for debugging and monitoring
+- Don't let errors crash the entire app
+
+### Type Safety
+- Use TypeScript or PropTypes for type checking
+- Define prop types for all components
+- Use TypeScript interfaces for complex props
+- Validate prop types at runtime with PropTypes
+- Catch type errors early in development
+
+### Styling
+- Use CSS Modules for scoped styles
+- Consider styled-components or CSS-in-JS for dynamic styles
+- Avoid inline styles for static CSS
+- Follow a consistent styling approach
+- Prevent global CSS conflicts with scoping
+
+### Dependency Management
+- Review third-party dependencies before adding
+- Keep dependencies up to date
+- Audit packages for security vulnerabilities
+- Avoid over-reliance on libraries for simple tasks
+- Consider bundle size impact of dependencies
+
+### Documentation
+- Add doc comments for complex components and hooks
+- Write self-explanatory code over excessive comments
+- Document non-obvious behavior and edge cases
+- Include usage examples in component docs
+- Keep comments up to date with code changes

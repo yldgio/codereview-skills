@@ -16,12 +16,20 @@ description: NestJS module architecture, dependency injection, guards, intercept
 - Use DTOs for request validation, not raw objects
 - Apply guards at controller or handler level as appropriate
 - Use proper HTTP status codes with `@HttpCode()`
+- Follow RESTful conventions for resource naming
+- Use consistent routing structure (e.g., `/api/v1/resources`)
+- Implement API versioning when needed
+- Use descriptive route paths and parameter names
 
 ### Services
 - Services contain business logic
 - Use constructor injection for dependencies
 - Services should be stateless (no instance variables for request data)
 - Use `@Injectable()` with appropriate scope (default singleton is usually correct)
+- Use `async`/`await` for asynchronous operations
+- Avoid unhandled promise rejections - always handle errors
+- Propagate errors appropriately (don't swallow exceptions)
+- Return meaningful error messages from service layer
 
 ### DTOs and Validation
 - Use `class-validator` decorators on DTO properties
@@ -45,3 +53,33 @@ description: NestJS module architecture, dependency injection, guards, intercept
 - Use `@Exclude()` to hide sensitive fields in responses
 - Implement rate limiting with `@nestjs/throttler`
 - Sanitize user input before database queries
+
+### Configuration
+- Use `@nestjs/config` for configuration management
+- Validate environment variables on startup
+- Use `ConfigModule.forRoot()` in app module
+- Access config via `ConfigService` dependency injection
+- Don't hardcode configuration values in code
+
+### Testing
+- Write unit tests using `@nestjs/testing`
+- Mock dependencies with `createMock` or manual mocks
+- Test controllers, services, and guards separately
+- Use `Test.createTestingModule()` for integration tests
+- Write e2e tests for critical flows
+- Separate test code from implementation code
+
+### File Organization
+- Follow consistent file naming (e.g., `user.controller.ts`, `user.service.ts`)
+- Group related files in feature folders
+- Keep modules, controllers, services, DTOs in separate files
+- Use consistent folder structure across features
+- Place shared/common code in dedicated folders
+
+### API Documentation
+- Use `@nestjs/swagger` for automatic API documentation
+- Apply `@Api*` decorators to controllers and DTOs
+- Document all endpoints with `@ApiOperation()`
+- Define response types with `@ApiResponse()`
+- Include examples in `@ApiProperty()` decorators
+- Keep Swagger docs up to date with code changes

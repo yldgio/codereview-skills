@@ -11,6 +11,9 @@ description: Azure Bicep IaC patterns, parameterization, security, and modular d
 - Provide `@description()` for all parameters
 - Use `@allowed()` for constrained values
 - Set sensible `@minLength()`, `@maxLength()`, `@minValue()`, `@maxValue()`
+- Provide default values where appropriate to reduce required inputs
+- Validate complex parameter types (objects, arrays) with custom logic
+- Document parameter purpose and expected values
 
 ### Security
 - Never hardcode secrets, connection strings, or keys
@@ -18,12 +21,21 @@ description: Azure Bicep IaC patterns, parameterization, security, and modular d
 - Apply least privilege to managed identities
 - Enable diagnostic settings for auditing
 - Use private endpoints where available
+- Enforce encryption at rest for all supported resources
+- Validate Azure Policy compliance for resources
+- Check regulatory standards compliance (HIPAA, PCI-DSS, etc.)
 
 ### Resource Naming
 - Use consistent naming convention
 - Include environment, region, workload in names
 - Use `uniqueString()` for globally unique names
 - Follow Azure naming rules and restrictions
+
+### Resource Tagging
+- Tag all resources with standard tags (owner, environment, cost center)
+- Use consistent tag naming conventions
+- Include tags for governance (compliance, data classification)
+- Define required tags in policy and enforce them
 
 ### Modules
 - Break down large templates into modules
@@ -36,6 +48,10 @@ description: Azure Bicep IaC patterns, parameterization, security, and modular d
 - Use `dependsOn` only when implicit dependencies aren't enough
 - Prefer symbolic names over `resourceId()` functions
 - Use loops (`for`) instead of copy-paste for similar resources
+- Include template metadata block with author, version, and docs
+- Use meaningful error messages with `assert()` for validation
+- Avoid deprecated or preview resource API versions unless justified
+- Document reasons for using preview features
 
 ### Outputs
 - Output only values needed by other templates/scripts
@@ -52,11 +68,21 @@ param environment string
 @secure()
 param sqlAdminPassword string
 
+metadata description = 'Azure Storage Account with Key Vault integration'
+metadata author = 'Infrastructure Team'
+metadata version = '1.0.0'
+
 var baseName = 'myapp-${environment}-${uniqueString(resourceGroup().id)}'
+var commonTags = {
+  environment: environment
+  owner: 'infrastructure-team'
+  costCenter: 'IT-001'
+}
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: '${baseName}sa'
   location: resourceGroup().location
+  tags: commonTags
   sku: { name: 'Standard_LRS' }
   kind: 'StorageV2'
   properties: {

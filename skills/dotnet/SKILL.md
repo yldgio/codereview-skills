@@ -25,6 +25,8 @@ description: ASP.NET Core patterns, dependency injection, middleware, async/awai
 - Use `[ApiController]` attribute for automatic model validation
 - Return `ActionResult<T>` for type safety
 - Use `[ProducesResponseType]` for API documentation
+- Implement API versioning (URL, header, or query string)
+- Use consistent versioning strategy across endpoints
 
 ### Middleware
 - Order matters: add middleware in correct sequence
@@ -44,9 +46,36 @@ description: ASP.NET Core patterns, dependency injection, middleware, async/awai
 - Use parameterized queries (EF Core does this by default)
 - Don't log sensitive data
 - Use HTTPS redirection middleware
+- Store secrets in Azure Key Vault or environment variables
+- Use User Secrets for local development
+- Never commit secrets to source control
 
 ### Entity Framework Core
 - Use `AsNoTracking()` for read-only queries
 - Avoid N+1 queries (use `Include()` or projection)
 - Use migrations for schema changes
 - Don't expose entities directly (use DTOs)
+- Manage DbContext lifetime properly (scoped per request)
+- Use async methods for database operations
+- Dispose DbContext appropriately (handled by DI in ASP.NET Core)
+
+### Logging and Exception Handling
+- Use structured logging with `ILogger<T>`
+- Include correlation IDs for request tracing
+- Log exceptions at appropriate levels (Error, Warning, Information)
+- Use centralized exception handling middleware
+- Don't catch exceptions unless you can handle them
+- Include relevant context in log messages
+
+### Thread Safety
+- Singleton services must be thread-safe
+- Avoid mutable shared state in singletons
+- Use `lock`, `SemaphoreSlim`, or `ConcurrentDictionary` for shared resources
+- Be cautious with static fields
+
+### Testing
+- Write unit tests for business logic
+- Use in-memory providers for EF Core in tests
+- Mock external dependencies with interfaces
+- Test controller actions with integration tests
+- Use `WebApplicationFactory` for integration testing

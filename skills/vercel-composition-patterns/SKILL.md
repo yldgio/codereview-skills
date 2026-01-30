@@ -183,9 +183,13 @@ function TodoProvider({ children }) {
 ### Consumer Implementation
 
 ```tsx
-// Consumer uses generic interface
+// Consumer uses generic interface (compatible with React 18+)
+import { useContext } from 'react';
+
 function TodoList() {
-  const { state: todos, actions } = use(TodoContext);
-  return todos.map(todo => <TodoItem key={todo.id} {...todo} onRemove={actions.remove} />);
+  const { state: todos, actions } = useContext(TodoContext);
+  return todos.map(todo => (
+    <TodoItem key={todo.id} {...todo} onRemove={actions.remove} />
+  ));
 }
 ```

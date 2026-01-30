@@ -1,24 +1,18 @@
-import json
 import os
-import textwrap
+import subprocess
 import time
 from datetime import datetime, timezone
 from glob import glob
 from pathlib import Path
-from urllib import error, request
 
 
 def build_prompt(skill_name: str, content: str) -> str:
-    return textwrap.dedent(
-        f"""\
-        You are reviewing a skill definition used for code review agents.
-        Provide improvement suggestions and identify gaps or missing rules.
-        Return a concise markdown list with at most 6 bullets.
-        Skill name: {skill_name}
-
-        Skill content:
-        {content}
-        """
+    return (
+        "You are reviewing a skill definition used for code review agents. "
+        "Provide improvement suggestions and identify gaps or missing rules. "
+        "Return a concise markdown list with at most 6 bullets.\n\n"
+        f"Skill name: {skill_name}\n\n"
+        f"Skill content:\n{content}"
     )
 
 
@@ -44,35 +38,36 @@ def parse_max_skills(raw_value: str | None) -> int:
     return min(value, 50)
 
 
-def call_model(*, token: str, model_id: str, prompt: str) -> str:
-    payload = {
-        "model": model_id,
-        "messages": [{"role": "user", "content": prompt}],
-    }
+def call_model(*, model_id: str, prompt: str) -> str:
+    """Call GitHub Models via the gh-models CLI extension.
 
-    req = request.Request(
-        "https://models.github.ai/inference/chat/completions",
-        data=json.dumps(payload).encode("utf-8"),
-        headers={
-            "Accept": "application/vnd.github+json",
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {token}",
-            "X-GitHub-Api-Version": "2022-11-28",
-        },
-        method="POST",
-    )
-
+    Requires `gh extension install github/gh-models` and GH_TOKEN env var.
+    Uses stdin to pass the prompt to avoid command-line length limits.
+    """
     try:
-        with request.urlopen(req, timeout=60) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-        return data["choices"][0]["message"]["content"].strip()
-    except error.HTTPError as e:
-        if e.code in (401, 403):
-            raise SystemExit(
-                f"GitHub Models authentication failed (HTTP {e.code}). "
-                "Check GH_MODELS_TOKEN."
-            )
-        return f"- ❗ Model call failed (HTTP {e.code})."
+        result = subprocess.run(
+            ["gh", "models", "run", model_id],
+            input=prompt,
+            capture_output=True,
+            text=True,
+            timeout=120,
+            check=False,
+        )
+        if result.returncode != 0:
+            stderr = result.stderr.strip()
+            if "auth" in stderr.lower() or "401" in stderr or "403" in stderr:
+                raise SystemExit(
+                    f"GitHub Models authentication failed. "
+                    f"Ensure GH_TOKEN has models:read permission. Error: {stderr}"
+                )
+            return f"- ❗ Model call failed: {stderr or 'Unknown error'}"
+        return result.stdout.strip()
+    except subprocess.TimeoutExpired:
+        return "- ❗ Model call timed out."
+    except FileNotFoundError:
+        raise SystemExit(
+            "gh CLI not found. Ensure gh is installed and gh-models extension is available."
+        )
     except Exception as e:
         return f"- ❗ Model call failed: {type(e).__name__}: {e}"
 
@@ -80,10 +75,6 @@ def call_model(*, token: str, model_id: str, prompt: str) -> str:
 def main() -> None:
     model_id = os.getenv("MODEL_ID", "openai/gpt-4.1")
     max_skills = parse_max_skills(os.getenv("MAX_SKILLS"))
-    token = os.getenv("GH_MODELS_TOKEN")
-
-    if not token:
-        raise SystemExit("Missing GH_MODELS_TOKEN.")
 
     skill_paths = sorted(glob("skills/**/SKILL.md", recursive=True))
     total_skills = len(skill_paths)
@@ -94,7 +85,8 @@ def main() -> None:
     for path in skill_paths:
         skill_name = Path(path).parent.name
         content = Path(path).read_text(encoding="utf-8")
-        suggestions = call_model(token=token, model_id=model_id, prompt=build_prompt(skill_name, content))
+        prompt = build_prompt(skill_name, content)
+        suggestions = call_model(model_id=model_id, prompt=prompt)
         if suggestions.startswith("- ❗"):
             failure_count += 1
         sections.append(f"## {skill_name}\n\n{suggestions}\n")

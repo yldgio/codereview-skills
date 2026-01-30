@@ -72,4 +72,4 @@ jobs:
           gh issue create \
             --title "chore: apply skill improvements from weekly review" \
             --body-file reports/issue-body.md \
-            --assignee "copilot-swe-agent[bot]"
+            --label "copilot"

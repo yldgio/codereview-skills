@@ -1,6 +1,6 @@
 # Agent Instructions
 
-> **Note:** All provided skills in this repository are explicitly designed for usage during code reviews.
+> **Note:** All provided skills in this repository are explicitly designed for use in code reviews.
 
 This repository contains reusable skills for AI coding agents. Follow these instructions when working with or contributing to this repository.
 

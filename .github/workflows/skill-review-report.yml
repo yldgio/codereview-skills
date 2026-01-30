@@ -15,8 +15,7 @@ on:
         default: "openai/gpt-4.1"
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
   issues: write
   models: read
 
@@ -54,16 +53,16 @@ jobs:
           name: skill-review-report
           path: reports/skill-review-report.md
 
-      - name: Create pull request
-        uses: peter-evans/create-pull-request@v6
-        with:
-          branch: skill-review-report
-          title: "chore: weekly skill review report"
-          commit-message: "chore: update skill review report"
-          body: |
-            Automated weekly skill review report.
+      - name: Create issue for Copilot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          REPORT_CONTENT=$(cat reports/skill-review-report.md)
+          gh issue create \
+            --title "chore: apply skill improvements from weekly review" \
+            --assignee "copilot" \
+            --body "Apply the improvements below for the skill files in the repository. Skills are located in the \`skills\` folder. Each skill has a \`SKILL.md\` file that should be updated based on the suggestions.
 
-            - Source: GitHub Actions schedule
-            - Model: `${{ github.event_name == 'workflow_dispatch' && github.event.inputs.model_id || 'openai/gpt-4.1' }}`
-          add-paths: |
-            reports/skill-review-report.md
+          ---
+
+          $REPORT_CONTENT"

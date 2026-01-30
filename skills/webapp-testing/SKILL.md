@@ -113,13 +113,14 @@ with sync_playwright() as p:
     # Browser closes automatically
 
 # Or explicit cleanup
-browser = None
-try:
-    browser = p.chromium.launch()
-    # ... test code ...
-finally:
-    if browser:
-        browser.close()
+with sync_playwright() as p:
+    browser = None
+    try:
+        browser = p.chromium.launch()
+        # ... test code ...
+    finally:
+        if browser:
+            browser.close()
 ```
 
 ### Browser Console Logs

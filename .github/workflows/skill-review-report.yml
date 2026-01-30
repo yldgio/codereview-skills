@@ -53,16 +53,23 @@ jobs:
           name: skill-review-report
           path: reports/skill-review-report.md
 
+      - name: Prepare issue body
+        run: |
+          cat > reports/issue-body.md << 'EOF'
+          Apply the improvements below for the skill files in the repository.
+          Skills are located in the `skills` folder.
+          Each skill has a `SKILL.md` file that should be updated based on the suggestions.
+
+          ---
+
+          EOF
+          cat reports/skill-review-report.md >> reports/issue-body.md
+
       - name: Create issue for Copilot
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          REPORT_CONTENT=$(cat reports/skill-review-report.md)
           gh issue create \
             --title "chore: apply skill improvements from weekly review" \
-            --assignee "copilot" \
-            --body "Apply the improvements below for the skill files in the repository. Skills are located in the \`skills\` folder. Each skill has a \`SKILL.md\` file that should be updated based on the suggestions.
-
-          ---
-
-          $REPORT_CONTENT"
+            --body-file reports/issue-body.md \
+            --assignee "copilot-swe-agent[bot]"

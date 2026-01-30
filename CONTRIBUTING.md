@@ -1,6 +1,6 @@
-# Contributing to Anomalyco Agent Skills
+# Contributing to Code Review Skills
 
-Thank you for your interest in contributing to Anomalyco! This document provides guidelines for contributing to this repository.
+Thank you for your interest in contributing to Code Review Skills! This document provides guidelines for contributing to this repository.
 
 ## Table of Contents
 
@@ -46,8 +46,8 @@ Thank you for your interest in contributing to Anomalyco! This document provides
 
 ```bash
 # Fork the repository on GitHub, then:
-git clone https://github.com/YOUR-USERNAME/anomalyco.git
-cd anomalyco
+git clone https://github.com/YOUR-USERNAME/codereview-skills.git
+cd codereview-skills
 ```
 
 ### 2. Create a Branch
@@ -284,4 +284,4 @@ By contributing, you agree that your contributions will be licensed under the MI
 
 ---
 
-**Thank you for contributing to Anomalyco!** 🚀
+**Thank you for contributing to Code Review Skills!** 🚀

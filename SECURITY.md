@@ -63,4 +63,4 @@ This repository follows these security practices:
 - Once fixed, a security advisory will be published
 - Credit will be given to reporters (if desired)
 
-Thank you for helping keep Anomalyco secure! 🔒
+Thank you for helping keep Code Review Skills secure! 🔒

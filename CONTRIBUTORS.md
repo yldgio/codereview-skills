@@ -1,4 +1,4 @@
-# Anomalyco Contributors
+# Code Review Skills Contributors
 
 This file recognizes the people who have contributed to this project.
 
@@ -10,7 +10,7 @@ This file recognizes the people who have contributed to this project.
 
 <!-- Contributors will be added here as they make contributions -->
 
-Thank you to everyone who has contributed to making Anomalyco better! 🙏
+Thank you to everyone who has contributed to making Code Review Skills better! 🙏
 
 ---
 

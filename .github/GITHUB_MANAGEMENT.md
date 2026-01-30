@@ -1,6 +1,6 @@
 # GitHub Repository Management Guide
 
-This document outlines the GitHub configuration and best practices for managing the Anomalyco repository.
+This document outlines the GitHub configuration and best practices for managing the Code Review Skills repository.
 
 ## Branch Protection Rules
 
@@ -270,4 +270,5 @@ Example workflow: `.github/workflows/validate-skill.yml`
 
 ---
 
-**Last Updated:** 2026-01-29
+**Last Updated:** 2026-01-30  
+**Repository:** https://github.com/yldgio/codereview-skills

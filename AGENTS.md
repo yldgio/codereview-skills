@@ -7,7 +7,7 @@ This repository contains reusable skills for AI coding agents. Follow these inst
 ## Repository Structure
 
 ```
-anomalyco/
+codereview-skills/
 ├── README.md           # User documentation
 ├── AGENTS.md           # This file - agent instructions
 ├── LICENSE             # MIT License
@@ -139,3 +139,15 @@ Use semantic versioning in metadata:
 - `1.0.0` - Initial release
 - `1.1.0` - New rules added
 - `2.0.0` - Breaking changes to rule structure
+
+## Documentation Maintenance
+
+**IMPORTANT:** Always keep documentation up to date when making changes:
+
+- Update README.md when adding/removing skills or changing installation instructions
+- Update AGENTS.md when modifying skill format or guidelines
+- Update CONTRIBUTING.md when changing contribution workflow or requirements
+- Update version numbers in skill frontmatter when updating skill content
+- Update repository references (URLs, names) across all documentation files when the repository changes
+
+Before submitting any PR, verify that all documentation accurately reflects the current state of the repository.

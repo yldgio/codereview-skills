@@ -1,4 +1,4 @@
-# Anomalyco Agent Skills
+# Code Review Skills
 
 > **Note:** All provided skills in this repository are explicitly designed for use in code reviews.
 
@@ -10,10 +10,10 @@ Install skills using the [skills.sh](https://skills.sh) CLI:
 
 ```bash
 # Install a specific skill
-npx skills add https://github.com/yldgio/anomalyco --skill nextjs
+npx skills add https://github.com/yldgio/codereview-skills --skill nextjs
 
 # Install multiple skills
-npx skills add https://github.com/yldgio/anomalyco --skill docker --skill terraform
+npx skills add https://github.com/yldgio/codereview-skills --skill docker --skill terraform
 ```
 
 ## Available Skills
@@ -94,12 +94,12 @@ If you prefer not to use the CLI, copy the skill folder to your project:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yldgio/anomalyco.git /tmp/anomalyco
+git clone https://github.com/yldgio/codereview-skills.git /tmp/codereview-skills
 
 # Copy a skill to your project
-cp -r /tmp/anomalyco/skills/docker .opencode/skills/
+cp -r /tmp/codereview-skills/skills/docker .opencode/skills/
 # or for Claude-compatible tools
-cp -r /tmp/anomalyco/skills/docker .claude/skills/
+cp -r /tmp/codereview-skills/skills/docker .claude/skills/
 ```
 
 ## Contributing

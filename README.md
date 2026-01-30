@@ -120,6 +120,16 @@ Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed g
 
 For questions, open a GitHub Discussion or Issue.
 
+## Weekly Skill Review Report
+
+This repository includes a scheduled GitHub Actions workflow that generates a consolidated skill review report and opens/updates a single PR.
+
+- Workflow: `.github/workflows/skill-review-report.yml`
+- Script: `scripts/generate_skill_review_report.py`
+- Schedule: weekly (Monday 09:00 UTC) + manual trigger
+- Output: `reports/skill-review-report.md` in branch `skill-review-report`
+- Required secret: `GH_MODELS_TOKEN` (fallback to `GITHUB_TOKEN`)
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details.

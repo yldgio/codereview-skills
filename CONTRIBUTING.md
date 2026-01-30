@@ -40,6 +40,16 @@ Thank you for your interest in contributing to Code Review Skills! This document
 - For minor fixes (typos, formatting), submit a PR directly
 - Ensure changes follow existing skill structure
 
+### Weekly Skill Review Report
+
+Maintainers can run a scheduled workflow to generate improvement suggestions:
+
+- Workflow: `.github/workflows/skill-review-report.yml`
+- Script: `scripts/generate_skill_review_report.py`
+- Output PR: `skill-review-report` branch with `reports/skill-review-report.md`
+- Secrets: `GH_MODELS_TOKEN` (or `GITHUB_TOKEN` fallback) with `models:read`
+- Manual runs support overrides for model ID and max skills
+
 ## Development Workflow
 
 ### 1. Fork and Clone

@@ -2135,31 +2135,104 @@ git config --global credential.helper github
 
 ## Best Practices
 
-1. **Authentication**: Use environment variables for automation
+### Security and Token Handling
+- **Never commit personal access tokens or credentials to repositories**
+- Store tokens in environment variables, not in code or scripts
+- Redact sensitive information from output when logging or debugging
+- Use `gh secret` to manage tokens securely in GitHub Actions
+- Rotate tokens regularly and revoke unused tokens
+- Use fine-grained personal access tokens with minimum required permissions
 
    ```bash
    export GH_TOKEN=$(gh auth token)
    ```
 
-2. **Default Repository**: Set default to avoid repetition
+### Error Handling and Exit Codes
+- Check exit codes when scripting with gh commands
+- Implement retry logic for transient failures (rate limits, network issues)
+- Provide actionable error messages in scripts
+- Use `set -e` in bash scripts to fail on errors
+- Handle API rate limit errors gracefully
+
+   ```bash
+   if gh pr view 123 > /dev/null 2>&1; then
+     echo "PR exists"
+   else
+     echo "PR not found or error occurred" >&2
+     exit 1
+   fi
+   ```
+
+### API Rate Limiting
+- Be aware of GitHub API rate limits (5000/hour for authenticated users)
+- Check rate limit status: `gh api rate_limit`
+- Use `--paginate` judiciously to avoid excessive API calls
+- Implement exponential backoff for retry logic
+- Consider using conditional requests with ETags for cached data
+
+### CI/CD Integration
+- Disable interactive prompts in CI with `GH_NO_PROMPT=1`
+- Use non-interactive mode for automation
+- Set timeouts to prevent hanging jobs
+- Use `--json` output for parsing in scripts
+- Avoid destructive operations without confirmation flags
+
+   ```bash
+   # CI-friendly commands
+   export GH_NO_PROMPT=1
+   gh pr merge 123 --merge --delete-branch --yes
+   ```
+
+### Audit and Logging
+- Log gh CLI actions for audit trails
+- Use `--verbose` or `--debug` for troubleshooting
+- Track changes made via gh commands in scripts
+- Review GitHub audit logs for organizational compliance
+- Maintain scripts with comments explaining gh command usage
+
+   ```bash
+   # Log gh commands
+   gh pr create --title "Fix" 2>&1 | tee -a gh-audit.log
+   ```
+
+### Cross-Platform Compatibility
+- Be aware of shell differences (bash vs PowerShell vs cmd)
+- Use portable path separators in scripts
+- Test scripts on target platforms (Windows, macOS, Linux)
+- Handle line endings appropriately (CRLF vs LF)
+- Use `gh` completion for consistent experience across shells
+
+   ```bash
+   # Windows PowerShell
+   $env:GH_TOKEN = gh auth token
+   
+   # Unix shells
+   export GH_TOKEN=$(gh auth token)
+   ```
+
+### Default Repository
+- Set default to avoid repetition
 
    ```bash
    gh repo set-default owner/repo
    ```
 
-3. **JSON Parsing**: Use jq for complex data extraction
+### JSON Parsing
+- Use jq for complex data extraction
 
    ```bash
    gh pr list --json number,title --jq '.[] | select(.title | contains("fix"))'
    ```
 
-4. **Pagination**: Use --paginate for large result sets
+### Pagination
+- Use --paginate for large result sets
 
    ```bash
    gh issue list --state all --paginate
    ```
 
-5. **Caching**: Use cache control for frequently accessed data
+### Caching
+- Use cache control for frequently accessed data
    ```bash
    gh api /user --cache force
    ```

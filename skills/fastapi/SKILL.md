@@ -10,12 +10,20 @@ description: FastAPI endpoint design, Pydantic validation, dependency injection,
 - Return appropriate status codes (201 for create, 204 for delete, etc.)
 - Use path parameters for resource identifiers, query params for filtering
 - Group related endpoints with `APIRouter` and tags
+- Document endpoints with clear docstrings
+- Use OpenAPI metadata (summary, description, response descriptions)
+- Provide detailed response model documentation
+- Implement API versioning (URL prefix recommended)
+- Mark deprecated endpoints with `deprecated=True`
 
 ### Pydantic Models
 - Use Pydantic models for request body validation (not raw dicts)
 - Define explicit response models with `response_model` parameter
 - Use `Field()` for validation constraints (min/max, regex, etc.)
 - Separate input models from output models (Create vs Response)
+- Use type annotations for all endpoint arguments and return types
+- Return only JSON-serializable results
+- Use `model_config` for Pydantic v2 configuration
 
 ### Dependency Injection
 - Use `Depends()` for shared logic (auth, db sessions, etc.)
@@ -39,3 +47,14 @@ description: FastAPI endpoint design, Pydantic validation, dependency injection,
 - Use `OAuth2PasswordBearer` or similar for auth
 - Rate limit sensitive endpoints
 - Never log sensitive data (passwords, tokens)
+- Implement CORS properly with `CORSMiddleware`
+- Use CSRF protection for cookie-based auth
+- Validate content types and sanitize HTML to prevent XSS
+- Use security headers (HSTS, CSP, X-Frame-Options)
+
+### Project Structure
+- Organize by feature or layer (routers, models, services, dependencies)
+- Keep routers thin - business logic in services
+- Separate Pydantic models from database models
+- Use a `dependencies` module for reusable dependencies
+- Create `config.py` for settings management

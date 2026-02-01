@@ -24,3 +24,6 @@ __pycache__/
 *$py.class
 *.so
 .Python
+
+# Generated reports (created by CI workflow)
+reports/

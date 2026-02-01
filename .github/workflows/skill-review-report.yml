@@ -45,33 +45,63 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           MAX_SKILLS: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.max_skills || '50' }}
           MODEL_ID: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.model_id || 'openai/gpt-4.1' }}
-        run: python scripts/generate_skill_review_report.py
+        run: |
+          echo "::group::📋 Skill Review Report Generation"
+          echo "Starting progressive skill review process..."
+          echo "This will show step-by-step progress for transparency"
+          echo "::endgroup::"
+          
+          python scripts/generate_skill_review_report.py
 
       - name: Upload report artifact
         uses: actions/upload-artifact@v4
         with:
           name: skill-review-report
           path: reports/skill-review-report.md
+        if: always()
+
+      - name: Display report summary
+        if: always()
+        run: |
+          echo "::group::📊 Report Summary"
+          if [ -f reports/skill-review-report.md ]; then
+            echo "Report generated successfully!"
+            echo ""
+            echo "Preview of Executive Summary:"
+            head -n 20 reports/skill-review-report.md
+          else
+            echo "⚠️ Report file not found"
+          fi
+          echo "::endgroup::"
 
       - name: Prepare issue body
         run: |
+          echo "::group::📝 Preparing Issue Body"
           cat > reports/issue-body.md << 'EOF'
           Apply the improvements below for the skill files in the repository.
           Skills are located in the `skills` folder.
           Each skill has a `SKILL.md` file that should be updated based on the suggestions.
 
+          > 💡 **Tip**: This report uses progressive disclosure - start with the Executive Summary, then explore categories of interest, and finally dive into specific skill details.
+
           ---
 
           EOF
           cat reports/skill-review-report.md >> reports/issue-body.md
+          echo "Issue body prepared with progressive disclosure structure"
+          echo "::endgroup::"
 
       - name: Create issue for Copilot
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          echo "::group::🎫 Creating Copilot Issue"
           ISSUE_URL=$(gh issue create \
             --title "chore: apply skill improvements from weekly review" \
             --body-file reports/issue-body.md \
             --label "copilot")
           
+          echo "Issue created: $ISSUE_URL"
           gh issue comment "$ISSUE_URL" --body "@copilot"
+          echo "Copilot notified"
+          echo "::endgroup::"

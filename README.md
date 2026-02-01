@@ -130,6 +130,25 @@ This repository includes a scheduled GitHub Actions workflow that generates a co
 - Output: `reports/skill-review-report.md` in branch `skill-review-report`
 - Required secret (for model calls): `GH_MODELS_TOKEN` (PAT or fine-grained token with access to GitHub Models, e.g. `models:read`)
 
+### Progressive Disclosure Pattern
+
+The workflow implements a **progressive disclosure pattern** to make the review process more transparent and manageable:
+
+**During Execution:**
+- Real-time progress indicators showing which skills are being processed
+- Step-by-step status updates with visual icons (✅ success, ❌ errors)
+- Grouped GitHub Actions logs for easy navigation
+- Processing statistics and time tracking
+
+**In Reports:**
+- **Level 1 - Executive Summary**: High-level overview with key metrics
+- **Level 2 - Category Overview**: Skills organized by type (Frontend, Backend, DevOps, Testing)
+- **Level 3 - Detailed Reviews**: Full improvement suggestions per skill
+
+This structure allows users to quickly grasp the overall status and drill down into relevant details only when needed.
+
+For more details, see [PROGRESSIVE_DISCLOSURE.md](PROGRESSIVE_DISCLOSURE.md).
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details.

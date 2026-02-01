@@ -7,6 +7,11 @@ generate_skill_review_report.py and creates GitHub issues:
 - One sub-issue per skill with specific improvement suggestions
 
 Requires: gh CLI with authentication (GH_TOKEN environment variable)
+
+Note: If a parent issue already exists, the script exits without creating
+new issues. If a previous run was interrupted after creating the parent
+but before finishing all sub-issues, you may need to manually close the
+incomplete parent issue before re-running.
 """
 
 import json
@@ -16,19 +21,52 @@ import sys
 import time
 from pathlib import Path
 
+# Rate limiting configuration
+BASE_DELAY_SECONDS = 2
+MAX_RETRIES = 3
+BACKOFF_MULTIPLIER = 2
 
-def run_gh_command(args: list[str], check: bool = True) -> str:
-    """Run a gh CLI command and return stdout."""
-    result = subprocess.run(
-        ["gh"] + args,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if check and result.returncode != 0:
-        print(f"Error running gh {' '.join(args)}: {result.stderr}", file=sys.stderr)
-        raise subprocess.CalledProcessError(result.returncode, args, result.stdout, result.stderr)
-    return result.stdout.strip()
+
+def rate_limit_delay(delay: float = BASE_DELAY_SECONDS) -> None:
+    """Apply a delay to avoid GitHub API rate limiting."""
+    time.sleep(delay)
+
+
+def run_gh_command(args: list[str], check: bool = True, retries: int = MAX_RETRIES) -> str:
+    """Run a gh CLI command and return stdout with retry logic for rate limiting."""
+    delay = BASE_DELAY_SECONDS
+    last_error = None
+    
+    for attempt in range(retries):
+        result = subprocess.run(
+            ["gh"] + args,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        
+        if result.returncode == 0:
+            return result.stdout.strip()
+        
+        # Check for rate limiting (HTTP 403 or 429)
+        if "rate limit" in result.stderr.lower() or "403" in result.stderr or "429" in result.stderr:
+            print(f"Rate limited. Retrying in {delay} seconds... (attempt {attempt + 1}/{retries})", file=sys.stderr)
+            time.sleep(delay)
+            delay *= BACKOFF_MULTIPLIER
+            last_error = result.stderr
+            continue
+        
+        # Non-rate-limit error
+        if check:
+            print(f"Error running gh {' '.join(args)}: {result.stderr}", file=sys.stderr)
+            raise subprocess.CalledProcessError(result.returncode, args, result.stdout, result.stderr)
+        return result.stdout.strip()
+    
+    # All retries exhausted
+    if check:
+        print(f"Error running gh {' '.join(args)} after {retries} retries: {last_error}", file=sys.stderr)
+        raise subprocess.CalledProcessError(1, args, "", last_error or "Rate limit exceeded")
+    return ""
 
 
 def find_existing_issue(title: str, label: str = "copilot") -> int | None:
@@ -50,7 +88,9 @@ def find_existing_issue(title: str, label: str = "copilot") -> int | None:
             if issue.get("title") == title:
                 return issue.get("number")
     except json.JSONDecodeError:
-        pass
+        # If the GitHub CLI returns non-JSON output, log it and treat as if no matching issue exists.
+        print(f"Warning: Unexpected non-JSON output from gh issue list: {output}", file=sys.stderr)
+        return None
     
     return None
 
@@ -110,7 +150,9 @@ def main() -> None:
     # Check for existing parent issue to avoid duplicates
     existing_parent = find_existing_issue(parent_title)
     if existing_parent:
+        print(f"::notice::Parent issue #{existing_parent} already exists. Skipping issue creation.", file=sys.stderr)
         print(f"Parent issue #{existing_parent} already exists. Skipping creation.")
+        print("If the previous run was interrupted, manually close the incomplete parent issue and re-run.")
         sys.exit(0)
 
     # Create parent issue with placeholder body
@@ -124,54 +166,87 @@ _Sub-issues will be listed below after creation._"""
 
     parent_number = create_issue(parent_title, parent_body)
     print(f"Created parent issue #{parent_number}")
+    rate_limit_delay()
 
-    # Create sub-issues for each skill
+    # Create sub-issues for each skill with error handling for partial failures
     sub_issue_refs: list[str] = []
+    failed_skills: list[str] = []
     
-    for skill_name, suggestions in sorted(skill_suggestions.items()):
-        skill_title = f"Improve {skill_name} skill – scheduled review"
-        
-        # Check for existing sub-issue to avoid duplicates
-        existing_sub = find_existing_issue(skill_title)
-        if existing_sub:
-            print(f"Sub-issue for {skill_name} (#{existing_sub}) already exists. Skipping.")
-            sub_issue_refs.append(f"- [ ] #{existing_sub} {skill_title}")
-            continue
+    try:
+        for skill_name, suggestions in sorted(skill_suggestions.items()):
+            skill_title = f"Improve {skill_name} skill – scheduled review"
+            
+            # Check for existing sub-issue to avoid duplicates
+            existing_sub = find_existing_issue(skill_title)
+            if existing_sub:
+                print(f"Sub-issue for {skill_name} (#{existing_sub}) already exists. Skipping.")
+                sub_issue_refs.append(f"- [ ] #{existing_sub} {skill_title}")
+                continue
 
-        # Create sub-issue body
-        sub_body = f"""<!-- scheduled-skill-review:{skill_name} -->
+            # Format suggestions with consistent structure
+            # Handle potential error messages from model calls
+            if suggestions.startswith("- ❗"):
+                formatted_suggestions = f"**Note:** The following suggestions may contain errors:\n\n{suggestions}"
+            else:
+                formatted_suggestions = f"## Suggestions\n\n{suggestions}"
+
+            # Create sub-issue body
+            sub_body = f"""<!-- scheduled-skill-review:{skill_name} -->
 
 Apply the following improvements to `skills/{skill_name}/SKILL.md`:
 
-{suggestions}
+{formatted_suggestions}
 
 ---
 
 Parent issue: #{parent_number}"""
 
-        sub_number = create_issue(skill_title, sub_body)
-        print(f"Created sub-issue #{sub_number} for {skill_name}")
-        sub_issue_refs.append(f"- [ ] #{sub_number} {skill_title}")
+            try:
+                sub_number = create_issue(skill_title, sub_body)
+                print(f"Created sub-issue #{sub_number} for {skill_name}")
+                sub_issue_refs.append(f"- [ ] #{sub_number} {skill_title}")
+            except Exception as e:
+                print(f"Failed to create sub-issue for {skill_name}: {e}", file=sys.stderr)
+                failed_skills.append(skill_name)
+            
+            # Rate limiting delay between issue creations
+            rate_limit_delay()
+    
+    finally:
+        # Always update parent issue body with sub-issue references, even on partial failure
+        sub_issues_list = "\n".join(sub_issue_refs) if sub_issue_refs else "_No sub-issues created yet._"
         
-        # Small delay to avoid rate limiting
-        time.sleep(1)
-
-    # Update parent issue body with sub-issue references
-    sub_issues_list = "\n".join(sub_issue_refs)
-    updated_parent_body = f"""This issue tracks improvements to code review skill instructions identified by the weekly automated review.
+        failure_note = ""
+        if failed_skills:
+            failure_note = f"\n\n**Warning:** Failed to create sub-issues for: {', '.join(failed_skills)}"
+        
+        updated_parent_body = f"""This issue tracks improvements to code review skill instructions identified by the weekly automated review.
 
 **Goal:** Improve the quality and clarity of skill instructions used by AI coding agents for code review.
 
 ## Sub-issues
 
-{sub_issues_list}"""
+{sub_issues_list}{failure_note}"""
 
-    edit_issue(parent_number, updated_parent_body)
-    print(f"Updated parent issue #{parent_number} with sub-issue references")
+        try:
+            edit_issue(parent_number, updated_parent_body)
+            print(f"Updated parent issue #{parent_number} with sub-issue references")
+            rate_limit_delay()
+        except Exception as e:
+            print(f"Failed to update parent issue: {e}", file=sys.stderr)
 
-    # Comment on parent issue to trigger Copilot agent
-    comment_on_issue(parent_number, "@copilot")
-    print("Commented on parent issue to trigger Copilot agent")
+        # Comment on parent issue to trigger Copilot agent
+        try:
+            comment_on_issue(parent_number, "@copilot")
+            print("Commented on parent issue to trigger Copilot agent")
+            rate_limit_delay()
+        except Exception as e:
+            print(f"Failed to comment on parent issue: {e}", file=sys.stderr)
+    
+    # Exit with error if any sub-issues failed
+    if failed_skills:
+        print(f"::warning::Failed to create {len(failed_skills)} sub-issue(s)", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

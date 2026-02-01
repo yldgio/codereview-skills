@@ -1,6 +1,5 @@
 import os
 import subprocess
-import sys
 import time
 from datetime import datetime, timezone
 from glob import glob
@@ -187,9 +186,16 @@ def main() -> None:
         f"**Date**: {now}",
         f"**Model**: `{model_id}`",
         f"**Total Skills Scanned**: {len(skill_paths)} of {total_skills}",
-        f"**Success Rate**: {success_count}/{len(skill_paths)} ({(success_count/len(skill_paths)*100):.0f}%)",
-        "",
     ]
+    
+    # Add success rate only if we processed skills
+    if len(skill_paths) > 0:
+        success_rate = (success_count / len(skill_paths) * 100)
+        header.append(f"**Success Rate**: {success_count}/{len(skill_paths)} ({success_rate:.0f}%)")
+    else:
+        header.append("**Success Rate**: N/A (no skills to process)")
+    
+    header.append("")
     
     if total_skills > len(skill_paths):
         header.append(f"> ⚠️ **Note**: Report truncated to first {len(skill_paths)} skills.")

@@ -91,11 +91,13 @@ jobs:
           PARENT_NUMBER=$(echo "$PARENT_URL" | grep -oE '[0-9]+$')
           echo "Created parent issue #$PARENT_NUMBER"
 
-          # Array to hold sub-issue references
-          SUB_ISSUES=""
+          # Clear temp file for sub-issue references
+          rm -f /tmp/sub_issues.txt
+          touch /tmp/sub_issues.txt
 
           # Read skill suggestions from JSON and create sub-issues
-          for skill_name in $(jq -r 'keys[]' reports/skill-suggestions.json); do
+          # Use while loop with read to handle skill names properly
+          jq -r 'keys[]' reports/skill-suggestions.json | while IFS= read -r skill_name; do
             SKILL_TITLE="Improve ${skill_name} skill – scheduled review"
             
             # Check for existing open sub-issue to avoid duplicates
@@ -103,7 +105,7 @@ jobs:
             
             if [ -n "$EXISTING_SUB" ]; then
               echo "Sub-issue for $skill_name (#$EXISTING_SUB) already exists. Skipping."
-              SUB_ISSUES="${SUB_ISSUES}- [ ] #${EXISTING_SUB} ${SKILL_TITLE}\n"
+              echo "- [ ] #${EXISTING_SUB} ${SKILL_TITLE}" >> /tmp/sub_issues.txt
               continue
             fi
 
@@ -132,11 +134,14 @@ jobs:
             SUB_NUMBER=$(echo "$SUB_URL" | grep -oE '[0-9]+$')
             echo "Created sub-issue #$SUB_NUMBER for $skill_name"
             
-            SUB_ISSUES="${SUB_ISSUES}- [ ] #${SUB_NUMBER} ${SKILL_TITLE}\n"
+            echo "- [ ] #${SUB_NUMBER} ${SKILL_TITLE}" >> /tmp/sub_issues.txt
             
             # Small delay to avoid rate limiting
             sleep 1
           done
+
+          # Read sub-issues from temp file
+          SUB_ISSUES=$(cat /tmp/sub_issues.txt)
 
           # Update parent issue body with sub-issue references
           UPDATED_PARENT_BODY=$(cat << EOF
@@ -146,7 +151,7 @@ jobs:
 
           ## Sub-issues
 
-          $(echo -e "$SUB_ISSUES")
+          ${SUB_ISSUES}
           EOF
           )
 

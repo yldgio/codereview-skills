@@ -51,27 +51,108 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: skill-review-report
-          path: reports/skill-review-report.md
+          path: |
+            reports/skill-review-report.md
+            reports/skill-suggestions.json
 
-      - name: Prepare issue body
-        run: |
-          cat > reports/issue-body.md << 'EOF'
-          Apply the improvements below for the skill files in the repository.
-          Skills are located in the `skills` folder.
-          Each skill has a `SKILL.md` file that should be updated based on the suggestions.
-
-          ---
-
-          EOF
-          cat reports/skill-review-report.md >> reports/issue-body.md
-
-      - name: Create issue for Copilot
+      - name: Create parent and sub-issues for Copilot
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          ISSUE_URL=$(gh issue create \
-            --title "chore: apply skill improvements from weekly review" \
-            --body-file reports/issue-body.md \
+          set -e
+
+          PARENT_TITLE="chore: skill improvements from scheduled review"
+          
+          # Check for existing open parent issue to avoid duplicates
+          EXISTING_PARENT=$(gh issue list --state open --label "copilot" --search "in:title \"$PARENT_TITLE\"" --json number,title --jq '.[] | select(.title == "'"$PARENT_TITLE"'") | .number' | head -1)
+          
+          if [ -n "$EXISTING_PARENT" ]; then
+            echo "Parent issue #$EXISTING_PARENT already exists. Skipping creation."
+            exit 0
+          fi
+
+          # Create parent issue first with placeholder body
+          PARENT_BODY=$(cat << 'EOF'
+          This issue tracks improvements to code review skill instructions identified by the weekly automated review.
+
+          **Goal:** Improve the quality and clarity of skill instructions used by AI coding agents for code review.
+
+          ## Sub-issues
+
+          _Sub-issues will be listed below after creation._
+          EOF
+          )
+
+          PARENT_URL=$(gh issue create \
+            --title "$PARENT_TITLE" \
+            --body "$PARENT_BODY" \
             --label "copilot")
           
-          gh issue comment "$ISSUE_URL" --body "@copilot"
+          PARENT_NUMBER=$(echo "$PARENT_URL" | grep -oE '[0-9]+$')
+          echo "Created parent issue #$PARENT_NUMBER"
+
+          # Array to hold sub-issue references
+          SUB_ISSUES=""
+
+          # Read skill suggestions from JSON and create sub-issues
+          for skill_name in $(jq -r 'keys[]' reports/skill-suggestions.json); do
+            SKILL_TITLE="Improve ${skill_name} skill – scheduled review"
+            
+            # Check for existing open sub-issue to avoid duplicates
+            EXISTING_SUB=$(gh issue list --state open --label "copilot" --search "in:title \"$SKILL_TITLE\"" --json number,title --jq '.[] | select(.title == "'"$SKILL_TITLE"'") | .number' | head -1)
+            
+            if [ -n "$EXISTING_SUB" ]; then
+              echo "Sub-issue for $skill_name (#$EXISTING_SUB) already exists. Skipping."
+              SUB_ISSUES="${SUB_ISSUES}- [ ] #${EXISTING_SUB} ${SKILL_TITLE}\n"
+              continue
+            fi
+
+            # Get suggestions for this skill
+            suggestions=$(jq -r --arg skill "$skill_name" '.[$skill]' reports/skill-suggestions.json)
+            
+            # Create sub-issue body
+            SUB_BODY=$(cat << EOF
+          <!-- scheduled-skill-review:${skill_name} -->
+
+          Apply the following improvements to \`skills/${skill_name}/SKILL.md\`:
+
+          ${suggestions}
+
+          ---
+
+          Parent issue: #${PARENT_NUMBER}
+          EOF
+          )
+
+            SUB_URL=$(gh issue create \
+              --title "$SKILL_TITLE" \
+              --body "$SUB_BODY" \
+              --label "copilot")
+            
+            SUB_NUMBER=$(echo "$SUB_URL" | grep -oE '[0-9]+$')
+            echo "Created sub-issue #$SUB_NUMBER for $skill_name"
+            
+            SUB_ISSUES="${SUB_ISSUES}- [ ] #${SUB_NUMBER} ${SKILL_TITLE}\n"
+            
+            # Small delay to avoid rate limiting
+            sleep 1
+          done
+
+          # Update parent issue body with sub-issue references
+          UPDATED_PARENT_BODY=$(cat << EOF
+          This issue tracks improvements to code review skill instructions identified by the weekly automated review.
+
+          **Goal:** Improve the quality and clarity of skill instructions used by AI coding agents for code review.
+
+          ## Sub-issues
+
+          $(echo -e "$SUB_ISSUES")
+          EOF
+          )
+
+          gh issue edit "$PARENT_NUMBER" --body "$UPDATED_PARENT_BODY"
+          echo "Updated parent issue #$PARENT_NUMBER with sub-issue references"
+
+          # Comment on parent issue to trigger Copilot agent
+          gh issue comment "$PARENT_NUMBER" --body "@copilot"
+          echo "Commented on parent issue to trigger Copilot agent"

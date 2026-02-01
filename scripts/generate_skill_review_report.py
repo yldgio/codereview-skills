@@ -1,3 +1,4 @@
+import json
 import os
 import subprocess
 import time
@@ -99,6 +100,7 @@ def main() -> None:
 
     failure_count = 0
     sections: list[str] = []
+    skill_suggestions: dict[str, str] = {}
     for path in skill_paths:
         skill_name = Path(path).parent.name
         content = Path(path).read_text(encoding="utf-8")
@@ -107,6 +109,7 @@ def main() -> None:
         if suggestions.startswith("- ❗"):
             failure_count += 1
         sections.append(f"## {skill_name}\n\n{suggestions}\n")
+        skill_suggestions[skill_name] = suggestions
         time.sleep(0.5)
 
     if skill_paths and failure_count == len(skill_paths):
@@ -131,6 +134,13 @@ def main() -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     Path("reports/skill-review-report.md").write_text(report, encoding="utf-8")
     print("Report written to reports/skill-review-report.md")
+
+    # Write per-skill suggestions as JSON for workflow consumption
+    Path("reports/skill-suggestions.json").write_text(
+        json.dumps(skill_suggestions, indent=2, ensure_ascii=False),
+        encoding="utf-8"
+    )
+    print("Per-skill suggestions written to reports/skill-suggestions.json")
 
 
 if __name__ == "__main__":

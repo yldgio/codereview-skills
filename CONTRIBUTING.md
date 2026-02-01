@@ -120,6 +120,9 @@ Then create a Pull Request on GitHub.
 - [ ] Examples are provided where helpful
 - [ ] README.md updated if adding new skill
 - [ ] No sensitive information included
+- [ ] **Security checklist completed** (see Security Review Requirements below)
+- [ ] **No automatic external resource access** without user confirmation
+- [ ] **Prompt injection risks evaluated** and mitigated
 
 ### PR Template
 
@@ -170,8 +173,83 @@ Reviewers will check for:
 - **Actionability**: Guidelines are specific and implementable
 - **No Duplication**: Skill doesn't duplicate existing ones
 - **Security**: No credentials, API keys, or sensitive data
+- **Prompt Injection Protection**: Skill evaluated for prompt injection risks
+- **External Resource Access**: No automatic access without user confirmation
+- **Security Review**: All security checklist items addressed
 
 ## Skill Guidelines
+
+### Security Review Requirements
+
+**CRITICAL:** All new skills and modifications to existing skills MUST undergo security review before being merged.
+
+#### Prompt Injection Risk Assessment
+
+Complete this checklist for every skill contribution:
+
+- [ ] **Input Validation**: Does the skill incorporate user input? If yes, is it validated?
+- [ ] **External Code Execution**: Does the skill suggest executing code from external sources?
+- [ ] **Instruction Boundaries**: Are system instructions clearly separated from user content?
+- [ ] **Credential Handling**: Does the skill handle credentials, tokens, or secrets?
+- [ ] **Scope Definition**: Is the skill's scope well-defined and restricted?
+- [ ] **Command Injection**: Could the skill's examples enable command injection?
+- [ ] **Example Review**: Have all code examples been reviewed for security issues?
+
+#### External Resource Access
+
+- [ ] **No Automatic Access**: The skill does not instruct agents to automatically access external resources
+- [ ] **User Confirmation Required**: Any external access requires explicit user approval
+- [ ] **Clear Communication**: External access requirements are clearly documented
+
+#### Security Testing
+
+Before submitting:
+
+1. **Test with Adversarial Inputs**: Try to inject malicious instructions through:
+   - Code comments
+   - Configuration files
+   - User preferences
+   - Example code
+
+2. **Verify Boundaries**: Ensure the skill cannot be used to:
+   - Override security restrictions
+   - Access unauthorized resources
+   - Execute untrusted code
+   - Exfiltrate sensitive information
+
+3. **Review Examples**: Check that all code examples:
+   - Use placeholder URLs (example.com)
+   - Don't contain real credentials
+   - Follow security best practices
+   - Include security warnings where needed
+
+#### Documentation Requirements
+
+Include in your PR description:
+
+```markdown
+## Security Assessment
+
+### Prompt Injection Risks
+- [ ] Evaluated
+- Description: [How the skill prevents prompt injection]
+
+### External Resource Access
+- [ ] None required
+- [ ] Requires user confirmation for: [list resources]
+
+### Security Testing
+- [ ] Tested with adversarial inputs
+- Results: [summary of testing]
+
+### Security Considerations
+[Any special security notes or restrictions]
+```
+
+For detailed security guidelines, see:
+- `.github/copilot-instructions.md` - Comprehensive security instructions
+- `AGENTS.md` - Security requirements for skills
+- `SECURITY.md` - Security policy and reporting
 
 ### Frontmatter Requirements
 

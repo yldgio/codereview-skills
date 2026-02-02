@@ -9,6 +9,31 @@ Comprehensive reference for GitHub CLI (gh) - work seamlessly with GitHub from t
 
 **Version:** 2.85.0 (current as of January 2026)
 
+## Security Best Practices (Critical)
+
+**IMPORTANT: Read these security guidelines before using gh CLI commands.**
+
+### Token and Authentication Security
+- **Never store tokens in plain text** or share them
+- **Avoid using `--insecure-storage`** except in isolated/test environments
+- When using `--with-token < token.txt`, ensure the token file has restricted permissions (chmod 600)
+- Use environment variable `GH_TOKEN` with caution; tokens can be visible in process listings
+- Never commit tokens to version control
+- Rotate tokens regularly and revoke unused tokens
+
+### Command Injection Prevention
+- **Always validate or sanitize user input** before using in gh commands
+- When using templates (`--template '{{.name}}: {{.description}}'`), never include untrusted user-generated content without proper escaping
+- When using `--jq` filters or autolinks, validate input to prevent command injection
+- Quote all user-provided values in shell commands
+- Use safe quoting/escaping for field values (e.g., `--field title="User Provided Title"`)
+
+### Best Practices
+- Review permissions granted to gh CLI carefully
+- Use scoped tokens with minimal required permissions
+- Audit gh extensions before installation
+- Keep gh CLI updated to latest version for security patches
+
 ## Prerequisites
 
 ### Installation
@@ -66,6 +91,8 @@ gh auth refresh --scopes write:org,read:public_key
 ```
 
 ## CLI Structure
+
+**Note:** This reference is organized by command groups. New users should start with **Core Commands** (auth, repo, pr, issue) before exploring advanced features.
 
 ```
 gh                          # Root command

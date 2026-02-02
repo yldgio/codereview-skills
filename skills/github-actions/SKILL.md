@@ -5,12 +5,15 @@ description: GitHub Actions workflow security, performance optimization, and bes
 
 ## GitHub Actions Code Review Rules
 
-### Security
+### Security (Critical)
 - Pin actions to full commit SHA (not `@v1` or `@main`)
 - Use minimal `permissions` block (principle of least privilege)
 - Never echo secrets or use them in URLs
 - Use `secrets.GITHUB_TOKEN` instead of PATs when possible
 - Audit third-party actions before use
+- Review expressions (`${{ }}`) for injection risks; never interpolate untrusted user input
+- Validate all inputs to reusable workflows and custom actions
+- Never use HTML comments (`<!-- -->`) in workflow files
 
 ### Permissions
 ```yaml
@@ -36,11 +39,13 @@ permissions:
 - Use `concurrency` to cancel redundant runs
 - Consider self-hosted runners for heavy workloads
 
-### Workflow Structure
+### Workflow Structure (Essential)
 - Use reusable workflows for common patterns
 - Use composite actions for shared steps
 - Set appropriate `timeout-minutes` to prevent hung jobs
 - Use `if:` conditions to skip unnecessary jobs
+
+### Advanced Workflow Patterns
 - Separate CI (testing), CD (deployments), and PR checks into distinct workflows
 - Use environments to distinguish between dev, staging, and production
 - Avoid mixing all concerns in a single monolithic workflow
@@ -81,4 +86,4 @@ permissions:
 - Document workflow purpose and triggers
 - Maintain workflow README or documentation
 - Explain environment variables and their usage
-- Document required secrets and their purpose
+- List required secrets by name and explain their use, avoiding exposure of secret values in documentation

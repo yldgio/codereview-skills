@@ -172,8 +172,6 @@ Choose appropriate rendering strategy based on content requirements:
 - Document rendering mode choices clearly in code comments, avoiding disclosure of sensitive implementation details
 
 ### State Management and Context (Essential)
-
-### State Management and Context (Essential)
 - Split contexts by update frequency
 - Use context selectors to minimize re-renders
 - Keep context providers close to consumers

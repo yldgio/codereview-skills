@@ -31,8 +31,6 @@ description: Next.js 14+ App Router patterns, Server Components, API routes, and
 - Images must use `next/image` with explicit `width`/`height` or `fill`
 - Fonts should use `next/font` for automatic optimization
 - Check for proper `Suspense` boundaries around async components
-
-### Advanced Performance Patterns
 - Verify no blocking data fetches in layouts (affects all child routes)
 
 ### API Routes

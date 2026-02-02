@@ -110,8 +110,6 @@ If no files specified, ask the user which files to review.
 - **Accessibility** - aria-labels, semantic HTML, keyboard handlers
 - **Focus States** - visible focus, focus-visible patterns
 - **Forms** - autocomplete, validation, error handling
-- **Animation** - prefers-reduced-motion, compositor-friendly transforms
-- **Typography** - curly quotes, ellipsis, tabular-nums
 - **Images** - dimensions, lazy loading, alt text
 - **Performance** - virtualization, layout thrashing, preconnect
 
@@ -124,7 +122,6 @@ If no files specified, ask the user which files to review.
 - **Locale & i18n** - Intl.DateTimeFormat, Intl.NumberFormat
 
 ## Rule Documentation
-
 
 When reporting violations, provide:
 - Brief explanation of why the rule matters

@@ -49,7 +49,12 @@ description: FastAPI endpoint design, Pydantic validation, dependency injection,
 - Avoid blocking calls in async functions (use `run_in_executor`)
 
 ### Advanced Async Patterns
-- For complex async patterns, see [FastAPI Async Documentation](https://fastapi.tiangolo.com/async/)
+- Use async context managers (`async with`) for managing async resources (DB sessions, HTTP clients)
+- Use `BackgroundTasks` for work that should outlive the response
+- Use startup/shutdown events (`@app.on_event("startup"/"shutdown")`) to initialize/cleanup shared async resources
+- Apply concurrency limits with `asyncio.Semaphore` when calling external services
+- For streaming responses or WebSockets, implement backpressure-aware designs
+- For more patterns, see [FastAPI Async Documentation](https://fastapi.tiangolo.com/async/)
 
 ### Error Handling
 - Use `HTTPException` for expected errors with proper status codes

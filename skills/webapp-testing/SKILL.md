@@ -87,6 +87,9 @@ with sync_playwright() as p:
 
 ## Advanced Testing Patterns
 
+When building production-ready test suites, implement the following patterns:
+
+### Error Handling
 
 Implement robust error handling:
 ```python

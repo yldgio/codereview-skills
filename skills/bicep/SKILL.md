@@ -24,7 +24,7 @@ description: Azure Bicep IaC patterns, parameterization, security, and modular d
 - Use `@allowed()` for constrained values
 - Set sensible `@minLength()`, `@maxLength()`, `@minValue()`, `@maxValue()`
 - Provide default values where appropriate to reduce required inputs
-- Validate complex parameter types (objects, arrays) with custom logic or assertions
+- Validate complex parameter types with parameter constraints, assertions, or custom validation logic
 - Document parameter purpose and expected values
 
 ### Resource Naming (Essential)
@@ -53,7 +53,7 @@ description: Azure Bicep IaC patterns, parameterization, security, and modular d
 - Include template metadata block with author, version, and docs
 - Use meaningful error messages with `assert()` for validation
 
-### Advanced Patterns
+### API Version Management
 - Avoid deprecated or preview resource API versions unless justified
 - Document reasons for using preview features
 

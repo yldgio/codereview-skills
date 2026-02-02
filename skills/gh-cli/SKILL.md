@@ -23,7 +23,7 @@ Comprehensive reference for GitHub CLI (gh) - work seamlessly with GitHub from t
 
 ### Command Injection Prevention
 - **Always validate or sanitize user input** before using in gh commands
-- When using templates (`--template '{{.name}}: {{.description}}'`), never include untrusted user-generated content without proper escaping
+- When using `--template` with user-provided data, ensure field values are properly escaped to prevent injection attacks. Avoid constructing templates from untrusted input
 - When using `--jq` filters or autolinks, validate input to prevent command injection
 - Quote all user-provided values in shell commands
 - Use safe quoting/escaping for field values (e.g., `--field title="User Provided Title"`)

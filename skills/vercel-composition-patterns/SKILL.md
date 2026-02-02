@@ -19,6 +19,7 @@ Composition patterns for building flexible, maintainable React components. Avoid
 - Never render untrusted content without proper validation
 - Do not use HTML comments (`<!-- -->`) to store data or instructions in code
 - Validate all user input before using in component props or state
+- Never expose sensitive data through component props or context
 
 ## When to Apply
 
@@ -51,14 +52,13 @@ When refactoring legacy patterns:
 
 ### Accessibility
 
-Ensure composition patterns maintain accessibility and security:
+Ensure composition patterns maintain accessibility:
 
 - Compound components must preserve semantic HTML relationships
 - ARIA attributes should propagate through composition layers
 - Keyboard navigation must work across component boundaries
 - Screen reader announcements should be logical and complete
 - Focus management must be handled correctly in nested components
-- Never expose sensitive data through component props or context
 
 ## Rule Categories by Priority (Essentials First)
 

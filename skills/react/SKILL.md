@@ -44,7 +44,12 @@ description: React component patterns, hooks best practices, state management, a
 - Form inputs need associated labels
 
 ### Advanced Patterns
-- For advanced React patterns, see [React documentation](https://react.dev)
+- Use compound components (parent + stateless children) to model complex, related UI pieces while keeping state in the parent
+- Prefer controlled abstractions (e.g., `value`/`onChange` pairs) so consumers can own state when needed
+- Use Context for cross-cutting concerns (theme, auth, feature flags) and co-locate provider logic with domain-specific hooks
+- Consider render props or headless components when you need to share complex interaction logic while letting consumers control markup and styling
+- Combine memoization (`React.memo`, `useMemo`, `useCallback`) with clear prop contracts to optimize expensive, frequently rendered components
+- For deeper exploration of advanced React patterns, see the official [React documentation](https://react.dev)
 
 ### Anti-patterns
 - Avoid `useEffect` for state derivation (compute during render instead)

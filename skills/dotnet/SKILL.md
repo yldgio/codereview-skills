@@ -15,7 +15,7 @@ description: ASP.NET Core patterns, dependency injection, middleware, async/awai
 - Use User Secrets for local development
 - Never commit secrets to source control
 - Validate and sanitize all user input to prevent injection attacks
-- Never use HTML comments (`<!-- -->`) in production code
+- Avoid storing sensitive data or security-relevant instructions in HTML comments
 
 ### Dependency Injection
 - Register services with appropriate lifetime:
@@ -26,7 +26,7 @@ description: ASP.NET Core patterns, dependency injection, middleware, async/awai
 - Use `IOptions<T>` pattern for configuration
 
 ### Async/Await
-- Use `async`/`await` for I/O-bound operations (not CPU-bound work)
+- Use `async`/`await` for I/O-bound operations (database, HTTP calls, file system)
 - Always pass `CancellationToken` and respect it
 - Avoid `.Result` or `.Wait()` (causes deadlocks)
 - Use `ConfigureAwait(false)` in library code
@@ -63,7 +63,10 @@ description: ASP.NET Core patterns, dependency injection, middleware, async/awai
 - Use async methods for database operations
 
 ### Advanced EF Core Patterns
-- Dispose DbContext appropriately (handled by DI in ASP.NET Core)
+- Use compiled queries for hot paths that execute frequently
+- Use raw SQL via `FromSqlInterpolated`/`ExecuteSqlInterpolated` for complex queries while keeping parameters parameterized
+- Define global query filters for concerns like soft deletes or multi-tenancy
+- Consider splitting DbContexts by bounded context to keep models focused and reduce migration complexity
 
 ### Logging and Exception Handling
 - Use structured logging with `ILogger<T>`

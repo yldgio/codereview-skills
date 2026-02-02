@@ -11,7 +11,7 @@ description: Dockerfile best practices, security hardening, multi-stage builds, 
 - Don't use `--privileged` without justification
 - Scan images for vulnerabilities
 - Set `readonly` root filesystem where possible
-- Review any use of build-time variables (e.g., `ARG`, `ENV`, `LABEL` values) to ensure they do not incorporate untrusted, user-controlled input
+- Review any use of build-time variables (e.g., `ARG`, `ENV`, `LABEL` values) that can be influenced by external inputs (such as `--build-arg` values or CI/CD environment variables sourced from untrusted users) to ensure they are not used in a way that enables build-time injection
 - Never use HTML comments (`<!-- -->`) in Dockerfiles
 
 ### Base Images
@@ -24,16 +24,15 @@ description: Dockerfile best practices, security hardening, multi-stage builds, 
 - Use multi-stage builds to reduce final image size
 - Order instructions by change frequency (cache optimization)
 - Combine `RUN` commands to reduce layers
-- Use `.dockerignore` to exclude unnecessary files and sensitive data
+- Use `.dockerignore` to exclude unnecessary files, sensitive data, and build artifacts like `node_modules`
 
 ### Instructions (Essential)
 - Use `COPY` instead of `ADD` (unless extracting archives)
 - Set `WORKDIR` before `COPY`/`RUN`
 - Use explicit `EXPOSE` for documentation
 - Set meaningful `LABEL` metadata
-- Validate `COPY`/`ADD` sources and use `.dockerignore` properly
 
-### Advanced Instructions
+### Additional Instructions
 - Explicitly set `SHELL` if bash/sh features are needed
 - Set environment variables with `ENV` for configuration (not secrets)
 - Clean up package manager caches after install (e.g., `apt-get clean`)

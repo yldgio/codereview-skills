@@ -63,15 +63,13 @@ description: Terraform IaC patterns, state management, security, and modular des
 - Follow cloud provider naming rules and restrictions
 
 ### Best Practices
-Use `terraform fmt` for consistent formatting, `terraform validate` before applying, and `terraform plan` to review changes.
-
-**Core practices:**
+- Use `terraform fmt` for consistent formatting
+- Run `terraform validate` before applying
+- Use `terraform plan` to review changes before apply
 - Prefer `count` or `for_each` over duplicate resource blocks
 - Use `locals` for computed values and reduce repetition
 - Use `depends_on` only when implicit dependencies aren't sufficient
 - Pin provider versions in `required_providers` block
-
-**Advanced practices:**
 - Use static analysis tools (e.g., `tflint`, `checkov`) for quality and security
 - Implement automated testing with `terraform test` or similar
 - Detect and mitigate infrastructure drift with `terraform plan`

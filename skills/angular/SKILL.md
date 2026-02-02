@@ -10,12 +10,12 @@ description: Angular component architecture, RxJS patterns, change detection, an
 - Sanitize dynamic HTML with `DomSanitizer` only when needed; always prefer Angular's built-in sanitization
 - Validate route parameters and query strings to prevent injection attacks
 - Use Angular's built-in CSRF protection with HttpClient
-- Template variables (e.g., `*ngFor`, `trackBy`) should explicitly declare variables and avoid dynamic interpolation where possible
+- Validate and sanitize data before binding it in templates, especially when displaying user-generated content in `*ngFor` loops or other directives
 - Never interpolate untrusted user input into templates without proper sanitization
 
 ### Module Organization
 - Feature modules should be lazy-loaded where possible
-- Use `SharedModule` for reusable components/pipes/directives; explicitly define exports to avoid accidental global scope exposure
+- Use `SharedModule` for reusable components/pipes/directives. Explicitly define exports to make the module's public API clear
 - Use `CoreModule` for singleton services (provided in root); import only once in AppModule
 - Avoid circular module dependencies
 

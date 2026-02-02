@@ -169,16 +169,16 @@ Choose appropriate rendering strategy based on content requirements:
 - **ISR (Incremental Static)**: For content with predictable update patterns
 - **SSR (Server-Side)**: For personalized or real-time content
 - **CSR (Client-Side)**: For highly interactive, user-specific data
-- Document rendering mode choices clearly in code comments, avoiding disclosure of sensitive implementation details
+- Document rendering mode choices clearly in code comments, but never include secrets (API keys, tokens), credentials, or internal-only endpoints in comments
 
 ### State Management and Context (Essential)
 - Split contexts by update frequency
 - Use context selectors to minimize re-renders
 - Keep context providers close to consumers
+- Avoid prop drilling by using composition patterns
 
 ### Advanced State Patterns
 - Consider external stores (Zustand, Jotai) for global state
-- Avoid prop drilling by using composition patterns
 
 ### Monitoring and Profiling
 

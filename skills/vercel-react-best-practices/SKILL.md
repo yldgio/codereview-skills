@@ -173,11 +173,9 @@ Choose appropriate rendering strategy based on content requirements:
 
 ### State Management and Context (Essential)
 
-Optimize React context usage:
+### State Management and Context (Essential)
 - Split contexts by update frequency
 - Use context selectors to minimize re-renders
-- Consider external stores (Zustand, Jotai) for global state
-- Avoid prop drilling by using composition patterns
 - Keep context providers close to consumers
 
 ### Advanced State Patterns

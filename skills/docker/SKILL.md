@@ -40,13 +40,6 @@ description: Dockerfile best practices, security hardening, multi-stage builds, 
 - Understand `ENTRYPOINT` vs `CMD`: use `ENTRYPOINT` for main command, `CMD` for default args
 - Document container usage with OCI labels (`org.opencontainers.image.*`)
 
-### Advanced Instructions
-- Explicitly set `SHELL` if bash/sh features are needed
-- Set environment variables with `ENV` for configuration (not secrets)
-- Clean up package manager caches after install (e.g., `apt-get clean`)
-- Understand `ENTRYPOINT` vs `CMD`: use `ENTRYPOINT` for main command, `CMD` for default args
-- Document container usage with OCI labels (`org.opencontainers.image.*`)
-
 ### Health Checks
 - Include `HEALTHCHECK` instruction
 - Health check should verify app is actually working

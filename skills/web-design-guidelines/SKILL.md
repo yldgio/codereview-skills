@@ -114,10 +114,6 @@ If no files specified, ask the user which files to review.
 - **Typography** - curly quotes, ellipsis, tabular-nums
 - **Images** - dimensions, lazy loading, alt text
 - **Performance** - virtualization, layout thrashing, preconnect
-- **Navigation & State** - URL reflects state, deep-linking
-- **Dark Mode & Theming** - color-scheme, theme-color meta
-- **Touch & Interaction** - touch-action, tap-highlight
-- **Locale & i18n** - Intl.DateTimeFormat, Intl.NumberFormat
 
 **Advanced patterns:**
 - **Animation** - prefers-reduced-motion, compositor-friendly transforms

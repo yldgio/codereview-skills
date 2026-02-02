@@ -5,10 +5,18 @@ description: Angular component architecture, RxJS patterns, change detection, an
 
 ## Angular Code Review Rules
 
+### Security
+- Avoid `bypassSecurityTrust*` methods unless absolutely necessary; when used, require code comments justifying the bypass
+- Sanitize dynamic HTML with `DomSanitizer` only when needed; always prefer Angular's built-in sanitization
+- Validate route parameters and query strings to prevent injection attacks
+- Use Angular's built-in CSRF protection with HttpClient
+- Template variables (e.g., `*ngFor`, `trackBy`) should explicitly declare variables and avoid dynamic interpolation where possible
+- Never interpolate untrusted user input into templates without proper sanitization
+
 ### Module Organization
 - Feature modules should be lazy-loaded where possible
-- Shared module for reusable components/pipes/directives
-- Core module for singleton services (provided in root)
+- Use `SharedModule` for reusable components/pipes/directives; explicitly define exports to avoid accidental global scope exposure
+- Use `CoreModule` for singleton services (provided in root); import only once in AppModule
 - Avoid circular module dependencies
 
 ### Components
@@ -31,12 +39,7 @@ description: Angular component architecture, RxJS patterns, change detection, an
 ### Templates
 - Avoid complex logic in templates (use getters or pipes)
 - Use `ng-container` for structural directives without extra DOM
-- Sanitize dynamic HTML with `DomSanitizer` if needed
-
-### Security
-- Avoid `bypassSecurityTrust*` unless absolutely necessary
-- Validate route parameters and query strings
-- Use Angular's built-in CSRF protection with HttpClient
+- Never use dynamic HTML with `[innerHTML]` without proper sanitization; review all XSS risks
 
 ### Testing
 - Use `@angular/testing` utilities (TestBed, ComponentFixture)
@@ -57,18 +60,20 @@ description: Angular component architecture, RxJS patterns, change detection, an
 - Ensure keyboard navigation works for interactive elements
 - Test with screen readers and accessibility tools
 - Maintain proper heading hierarchy (h1, h2, h3)
+- For advanced accessibility patterns, see [Angular Accessibility Guide](https://angular.io/guide/accessibility)
 
-### State Management
+### State Management (Advanced)
 - Use NgRx or Akita for complex shared state
 - Signals (Angular 16+) for reactive local state
 - Services with BehaviorSubject for simple shared state
 - Avoid component state for data shared across routes
 
-### Internationalization
+### Internationalization (Advanced)
 - Use Angular i18n for localization
 - Mark translatable text with `i18n` attribute
 - Extract translations with `ng extract-i18n`
 - Serve locale-specific builds or use runtime translation
+- For detailed i18n patterns, see [Angular i18n Guide](https://angular.io/guide/i18n-overview)
 
 ### Linting and Code Style
 - Use ESLint with @angular-eslint rules

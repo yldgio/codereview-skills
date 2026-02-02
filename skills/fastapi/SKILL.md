@@ -5,6 +5,18 @@ description: FastAPI endpoint design, Pydantic validation, dependency injection,
 
 ## FastAPI Code Review Rules
 
+### Security (Critical)
+- Validate and sanitize all inputs to prevent injection attacks
+- Use `OAuth2PasswordBearer` or similar for auth
+- Rate limit sensitive endpoints
+- Never log sensitive data (passwords, tokens)
+- Implement CORS properly with `CORSMiddleware`
+- Use CSRF protection for cookie-based auth
+- Validate content types and sanitize HTML to prevent XSS
+- Use security headers (HSTS, CSP, X-Frame-Options)
+- Always validate user input in path operations and request bodies
+- Never use HTML comments (`<!-- -->`) in production code
+
 ### Endpoint Design
 - Use appropriate HTTP methods (GET for reads, POST for creates, etc.)
 - Return appropriate status codes (201 for create, 204 for delete, etc.)
@@ -36,21 +48,14 @@ description: FastAPI endpoint design, Pydantic validation, dependency injection,
 - Use `asyncio.gather()` for parallel async operations
 - Avoid blocking calls in async functions (use `run_in_executor`)
 
+### Advanced Async Patterns
+- For complex async patterns, see [FastAPI Async Documentation](https://fastapi.tiangolo.com/async/)
+
 ### Error Handling
 - Use `HTTPException` for expected errors with proper status codes
 - Create custom exception handlers for domain exceptions
 - Don't expose internal error details to clients
 - Log errors with context (request ID, user, etc.)
-
-### Security
-- Validate and sanitize all inputs
-- Use `OAuth2PasswordBearer` or similar for auth
-- Rate limit sensitive endpoints
-- Never log sensitive data (passwords, tokens)
-- Implement CORS properly with `CORSMiddleware`
-- Use CSRF protection for cookie-based auth
-- Validate content types and sanitize HTML to prevent XSS
-- Use security headers (HSTS, CSP, X-Frame-Options)
 
 ### Project Structure
 - Organize by feature or layer (routers, models, services, dependencies)

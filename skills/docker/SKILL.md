@@ -5,6 +5,15 @@ description: Dockerfile best practices, security hardening, multi-stage builds, 
 
 ## Docker Code Review Rules
 
+### Security (Critical)
+- Run as non-root user (`USER` directive)
+- Don't store secrets in image (use runtime injection)
+- Don't use `--privileged` without justification
+- Scan images for vulnerabilities
+- Set `readonly` root filesystem where possible
+- Review any use of build-time variables (e.g., `ARG`, `ENV`, `LABEL` values) to ensure they do not incorporate untrusted, user-controlled input
+- Never use HTML comments (`<!-- -->`) in Dockerfiles
+
 ### Base Images
 - Pin base image to specific version (not `latest`)
 - Use official images from trusted sources
@@ -15,32 +24,33 @@ description: Dockerfile best practices, security hardening, multi-stage builds, 
 - Use multi-stage builds to reduce final image size
 - Order instructions by change frequency (cache optimization)
 - Combine `RUN` commands to reduce layers
-- Use `.dockerignore` to exclude unnecessary files
+- Use `.dockerignore` to exclude unnecessary files and sensitive data
 
-### Security
-- Run as non-root user (`USER` directive)
-- Don't store secrets in image (use runtime injection)
-- Don't use `--privileged` without justification
-- Scan images for vulnerabilities
-- Set `readonly` root filesystem where possible
-
-### Health Checks
-- Include `HEALTHCHECK` instruction
-- Health check should verify app is actually working
-- Set appropriate interval and timeout
-
-### Instructions
+### Instructions (Essential)
 - Use `COPY` instead of `ADD` (unless extracting archives)
 - Set `WORKDIR` before `COPY`/`RUN`
 - Use explicit `EXPOSE` for documentation
 - Set meaningful `LABEL` metadata
 - Validate `COPY`/`ADD` sources and use `.dockerignore` properly
-- Use `.dockerignore` to exclude sensitive files and `node_modules`
+
+### Advanced Instructions
 - Explicitly set `SHELL` if bash/sh features are needed
 - Set environment variables with `ENV` for configuration (not secrets)
 - Clean up package manager caches after install (e.g., `apt-get clean`)
 - Understand `ENTRYPOINT` vs `CMD`: use `ENTRYPOINT` for main command, `CMD` for default args
 - Document container usage with OCI labels (`org.opencontainers.image.*`)
+
+### Advanced Instructions
+- Explicitly set `SHELL` if bash/sh features are needed
+- Set environment variables with `ENV` for configuration (not secrets)
+- Clean up package manager caches after install (e.g., `apt-get clean`)
+- Understand `ENTRYPOINT` vs `CMD`: use `ENTRYPOINT` for main command, `CMD` for default args
+- Document container usage with OCI labels (`org.opencontainers.image.*`)
+
+### Health Checks
+- Include `HEALTHCHECK` instruction
+- Health check should verify app is actually working
+- Set appropriate interval and timeout
 
 ### Example Good Dockerfile Pattern
 ```dockerfile

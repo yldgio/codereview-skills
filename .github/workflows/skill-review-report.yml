@@ -49,29 +49,21 @@ jobs:
 
       - name: Upload report artifact
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: skill-review-report
-          path: reports/skill-review-report.md
+          path: |
+            reports/skill-review-report.md
+            reports/skill-suggestions.json
 
-      - name: Prepare issue body
-        run: |
-          cat > reports/issue-body.md << 'EOF'
-          Apply the improvements below for the skill files in the repository.
-          Skills are located in the `skills` folder.
-          Each skill has a `SKILL.md` file that should be updated based on the suggestions.
-
-          ---
-
-          EOF
-          cat reports/skill-review-report.md >> reports/issue-body.md
-
-      - name: Create issue for Copilot
+      - name: Create parent and sub-issues for Copilot
+        id: create-issues
         env:
           GH_TOKEN: ${{ github.token }}
+        run: python scripts/create_skill_review_issues.py
+
+      - name: Check issue creation status
+        if: failure() && steps.create-issues.outcome == 'failure'
         run: |
-          ISSUE_URL=$(gh issue create \
-            --title "chore: apply skill improvements from weekly review" \
-            --body-file reports/issue-body.md \
-            --label "copilot")
-          
-          gh issue comment "$ISSUE_URL" --body "@copilot"
+          echo "::warning::Issue creation encountered errors. Check the logs above for details."
+          echo "Report artifacts have been uploaded for manual review."

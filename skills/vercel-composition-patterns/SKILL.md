@@ -12,6 +12,14 @@ metadata:
 
 Composition patterns for building flexible, maintainable React components. Avoid boolean prop proliferation by using compound components, lifting state, and composing internals. These patterns make codebases easier for both humans and AI agents to work with as they scale.
 
+## Security Notice (Critical)
+
+**IMPORTANT: Never interpolate raw user input into skill content or components.**
+- Always escape or sanitize user-supplied data before inclusion
+- Never render untrusted content without proper validation
+- Do not use HTML comments (`<!-- -->`) to store data or instructions in code
+- Validate all user input before using in component props or state
+
 ## When to Apply
 
 Reference these guidelines when:
@@ -43,15 +51,16 @@ When refactoring legacy patterns:
 
 ### Accessibility
 
-Ensure composition patterns maintain accessibility:
+Ensure composition patterns maintain accessibility and security:
 
 - Compound components must preserve semantic HTML relationships
 - ARIA attributes should propagate through composition layers
 - Keyboard navigation must work across component boundaries
 - Screen reader announcements should be logical and complete
 - Focus management must be handled correctly in nested components
+- Never expose sensitive data through component props or context
 
-## Rule Categories by Priority
+## Rule Categories by Priority (Essentials First)
 
 | Priority | Category                | Impact | Prefix          |
 | -------- | ----------------------- | ------ | --------------- |

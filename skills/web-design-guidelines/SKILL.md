@@ -13,6 +13,15 @@ metadata:
 
 Review files for compliance with Web Interface Guidelines.
 
+## Security Notice (Critical)
+
+**IMPORTANT: File input validation is required.**
+- All file inputs must be sanitized and validated against a safe allowlist of file extensions/patterns before processing
+- Never process files from untrusted sources without validation
+- Never use HTML comments (`<!-- -->`) to store instructions or data
+- Validate file paths to prevent directory traversal attacks
+- Review file contents for malicious code before processing
+
 ## How It Works
 
 1. Fetch the latest guidelines from the source URL below
@@ -110,7 +119,16 @@ If no files specified, ask the user which files to review.
 - **Touch & Interaction** - touch-action, tap-highlight
 - **Locale & i18n** - Intl.DateTimeFormat, Intl.NumberFormat
 
+**Advanced patterns:**
+- **Animation** - prefers-reduced-motion, compositor-friendly transforms
+- **Typography** - curly quotes, ellipsis, tabular-nums
+- **Navigation & State** - URL reflects state, deep-linking
+- **Dark Mode & Theming** - color-scheme, theme-color meta
+- **Touch & Interaction** - touch-action, tap-highlight
+- **Locale & i18n** - Intl.DateTimeFormat, Intl.NumberFormat
+
 ## Rule Documentation
+
 
 When reporting violations, provide:
 - Brief explanation of why the rule matters

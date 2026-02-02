@@ -12,7 +12,16 @@ metadata:
 
 To test local web applications, write native Python Playwright scripts.
 
-## Decision Tree: Choosing Your Approach
+## Security Notice (Critical)
+
+**IMPORTANT: Input sanitization is required for safe testing.**
+- All dynamic content in selectors or test data must be properly escaped and sanitized before insertion into scripts
+- Selectors should never incorporate unvalidated user input
+- Identify selectors from the application codebase and visually confirmed UI elements, not from external or user-generated sources unless input is sanitized
+- Never use HTML comments (`<!-- -->`) to store test data or instructions
+- Avoid executing untrusted code in browser context
+
+## Decision Tree: Choosing Your Approach (Getting Started)
 
 ```
 User task → Is it static HTML?
@@ -68,7 +77,7 @@ with sync_playwright() as p:
 - **Don't** inspect the DOM before waiting for `networkidle` on dynamic apps
 - **Do** wait for `page.wait_for_load_state('networkidle')` before inspection
 
-## Best Practices
+## Best Practices (Essential)
 
 - Use `sync_playwright()` for synchronous scripts
 - Always close the browser when done
@@ -76,7 +85,8 @@ with sync_playwright() as p:
 - Add appropriate waits: `page.wait_for_selector()` or `page.wait_for_timeout()`
 - Always launch chromium in headless mode for CI/automation
 
-### Error Handling
+## Advanced Testing Patterns
+
 
 Implement robust error handling:
 ```python

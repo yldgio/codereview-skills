@@ -12,7 +12,7 @@ description: NestJS module architecture, dependency injection, guards, intercept
 - Sanitize user input before database queries to prevent injection attacks
 - Never log sensitive data (passwords, tokens, API keys)
 - Use parameterized queries or ORM methods to prevent SQL injection
-- Never use HTML comments (`<!-- -->`) in production code
+- Avoid storing sensitive data or security-relevant instructions in HTML comments
 
 ### Module Architecture
 - One module per feature/domain

@@ -88,8 +88,10 @@ with sync_playwright() as p:
 
 When building production-ready test suites, implement the following patterns:
 
-### Error Handling
 
+When building production-ready test suites, implement the following patterns:
+
+### Error Handling
 Implement robust error handling:
 ```python
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeout

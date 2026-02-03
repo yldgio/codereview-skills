@@ -115,7 +115,6 @@ If no files specified, ask the user which files to review.
 
 **Advanced patterns:**
 - **Animation** - prefers-reduced-motion, compositor-friendly transforms
-- **Typography** - curly quotes, ellipsis, tabular-nums
 - **Navigation & State** - URL reflects state, deep-linking
 - **Dark Mode & Theming** - color-scheme, theme-color meta
 - **Touch & Interaction** - touch-action, tap-highlight

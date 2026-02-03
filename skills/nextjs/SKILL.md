@@ -5,6 +5,14 @@ description: Next.js 14+ App Router patterns, Server Components, API routes, and
 
 ## Next.js Code Review Rules
 
+### Security (Critical)
+- Server Actions must validate and sanitize all input
+- No secrets exposed in client components
+- Check `headers()` and `cookies()` usage is server-side only
+- Sanitize all dynamic values (file names, HTTP headers) to prevent injection attacks
+- Never use HTML comments (`<!-- -->`) in production code
+- Validate and escape all user-provided content before rendering
+
 ### App Router Structure
 - Verify `app/` directory structure follows conventions (`page.tsx`, `layout.tsx`, `loading.tsx`, `error.tsx`)
 - Check `use client` directive is only used when necessary (event handlers, hooks, browser APIs)
@@ -19,16 +27,11 @@ description: Next.js 14+ App Router patterns, Server Components, API routes, and
 - Validate `revalidate` options for ISR (Incremental Static Regeneration)
 - Ensure `generateStaticParams()` is used for static generation of dynamic routes
 
-### Performance
+### Performance (Essential)
 - Images must use `next/image` with explicit `width`/`height` or `fill`
 - Fonts should use `next/font` for automatic optimization
 - Check for proper `Suspense` boundaries around async components
 - Verify no blocking data fetches in layouts (affects all child routes)
-
-### Security
-- Server Actions must validate input
-- No secrets exposed in client components
-- Check `headers()` and `cookies()` usage is server-side only
 
 ### API Routes
 - Validate HTTP methods (check `req.method` or use route handlers)
@@ -61,7 +64,7 @@ description: Next.js 14+ App Router patterns, Server Components, API routes, and
 - Use official Next.js plugins when available
 - Avoid excessive dependencies for simple functionality
 
-### Edge Runtime
+### Edge Runtime (Advanced)
 - Review usage of Edge runtime for API routes
 - Ensure Edge-compatible code (no Node.js-specific APIs)
 - Use Edge runtime for latency-sensitive operations

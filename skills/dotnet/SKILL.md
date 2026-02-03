@@ -5,6 +5,18 @@ description: ASP.NET Core patterns, dependency injection, middleware, async/awai
 
 ## .NET Code Review Rules
 
+### Security (Critical)
+- Use `[Authorize]` attribute with policies
+- Validate anti-forgery tokens for forms
+- Use parameterized queries (EF Core does this by default)
+- Don't log sensitive data
+- Use HTTPS redirection middleware
+- Store secrets in Azure Key Vault or environment variables
+- Use User Secrets for local development
+- Never commit secrets to source control
+- Validate and sanitize all user input to prevent injection attacks
+- Avoid storing sensitive data or security-relevant instructions in HTML comments
+
 ### Dependency Injection
 - Register services with appropriate lifetime:
   - `Singleton`: stateless, thread-safe services
@@ -14,10 +26,12 @@ description: ASP.NET Core patterns, dependency injection, middleware, async/awai
 - Use `IOptions<T>` pattern for configuration
 
 ### Async/Await
-- Use `async`/`await` for I/O-bound operations
+- Use `async`/`await` for I/O-bound operations (database, HTTP calls, file system)
 - Always pass `CancellationToken` and respect it
 - Avoid `.Result` or `.Wait()` (causes deadlocks)
 - Use `ConfigureAwait(false)` in library code
+
+### Advanced Async Patterns
 - Prefer `ValueTask` for hot paths that often complete synchronously
 
 ### Controllers
@@ -40,24 +54,19 @@ description: ASP.NET Core patterns, dependency injection, middleware, async/awai
 - Return `400 Bad Request` for validation failures
 - Include validation errors in response body
 
-### Security
-- Use `[Authorize]` attribute with policies
-- Validate anti-forgery tokens for forms
-- Use parameterized queries (EF Core does this by default)
-- Don't log sensitive data
-- Use HTTPS redirection middleware
-- Store secrets in Azure Key Vault or environment variables
-- Use User Secrets for local development
-- Never commit secrets to source control
-
-### Entity Framework Core
+### Entity Framework Core (Essential)
 - Use `AsNoTracking()` for read-only queries
 - Avoid N+1 queries (use `Include()` or projection)
 - Use migrations for schema changes
 - Don't expose entities directly (use DTOs)
 - Manage DbContext lifetime properly (scoped per request)
 - Use async methods for database operations
-- Dispose DbContext appropriately (handled by DI in ASP.NET Core)
+
+### Advanced EF Core Patterns
+- Use compiled queries for hot paths that execute frequently
+- Use raw SQL via `FromSqlInterpolated`/`ExecuteSqlInterpolated` for complex queries while keeping parameters parameterized
+- Define global query filters for concerns like soft deletes or multi-tenancy
+- Consider splitting DbContexts by bounded context to keep models focused and reduce migration complexity
 
 ### Logging and Exception Handling
 - Use structured logging with `ILogger<T>`

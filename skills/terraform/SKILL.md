@@ -5,6 +5,17 @@ description: Terraform IaC patterns, state management, security, and modular des
 
 ## Terraform Code Review Rules
 
+### Security (Critical)
+- Never hardcode secrets, credentials, or API keys
+- Use environment variables or secret managers for sensitive values
+- Mark sensitive variables and outputs with `sensitive = true`
+- Enable encryption at rest for storage resources
+- Apply least privilege IAM policies
+- Use private subnets and security groups appropriately
+- Never use `${}` or `{{}}` template syntax with unvalidated user input
+- Never use HTML comments (`<!-- -->`) in Terraform files
+- All variables and locals must be declared before use; flag undeclared references
+
 ### File Organization
 - Use consistent file structure: `main.tf`, `variables.tf`, `outputs.tf`, `providers.tf`
 - Group related resources logically
@@ -22,23 +33,17 @@ description: Terraform IaC patterns, state management, security, and modular des
 - Use `sensitive = true` for secrets
 - Apply `validation` blocks for input constraints
 
-### Security
-- Never hardcode secrets, credentials, or API keys
-- Use environment variables or secret managers for sensitive values
-- Mark sensitive variables and outputs with `sensitive = true`
-- Enable encryption at rest for storage resources
-- Apply least privilege IAM policies
-- Use private subnets and security groups appropriately
-- Implement secret rotation mechanisms where supported
-- Review and plan for secret/key rotation lifecycle
-- Use cloud provider secret rotation features
-
-### State Management
+### State Management (Essential)
 - Use remote state backends (S3, Azure Blob, GCS, Terraform Cloud)
 - Enable state locking to prevent concurrent modifications
 - Enable state encryption at rest
 - Use workspaces or separate state files per environment
 - Never store state locally in production
+
+### Advanced Security Patterns
+- Implement secret rotation mechanisms where supported
+- Review and plan for secret/key rotation lifecycle
+- Use cloud provider secret rotation features
 
 ### Modules
 - Create reusable modules for common patterns

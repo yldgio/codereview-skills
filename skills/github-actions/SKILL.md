@@ -5,12 +5,14 @@ description: GitHub Actions workflow security, performance optimization, and bes
 
 ## GitHub Actions Code Review Rules
 
-### Security
+### Security (Critical)
 - Pin actions to full commit SHA (not `@v1` or `@main`)
 - Use minimal `permissions` block (principle of least privilege)
 - Never echo secrets or use them in URLs
 - Use `secrets.GITHUB_TOKEN` instead of PATs when possible
 - Audit third-party actions before use
+- Review expressions (`${{ }}`) for injection risks; never interpolate untrusted user input
+- Validate all inputs to reusable workflows and custom actions
 
 ### Permissions
 ```yaml
@@ -81,4 +83,4 @@ permissions:
 - Document workflow purpose and triggers
 - Maintain workflow README or documentation
 - Explain environment variables and their usage
-- Document required secrets and their purpose
+- Document required secret names and their purpose (never include actual secret values)

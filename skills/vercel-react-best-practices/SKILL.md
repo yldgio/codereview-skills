@@ -12,6 +12,15 @@ metadata:
 
 Comprehensive performance optimization guide for React and Next.js applications, maintained by Vercel. Contains 57 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation.
 
+## Security Notice (Critical)
+
+**IMPORTANT: Code security must be maintained during performance optimization.**
+- Never expose sensitive data when optimizing data serialization
+- Sanitize user-supplied code before rendering or evaluation
+- Validate all dynamic output to prevent injection attacks
+- Never use HTML comments (`<!-- -->`) to store sensitive information
+- Avoid direct evaluation or insertion of code samples without validation
+
 ## When to Apply
 
 Reference these guidelines when:
@@ -155,21 +164,21 @@ Integrate performance with reliability:
 
 ### Next.js Rendering Modes
 
-Choose appropriate rendering strategy:
+Choose appropriate rendering strategy based on content requirements:
 - **SSG (Static)**: For content that rarely changes
 - **ISR (Incremental Static)**: For content with predictable update patterns
 - **SSR (Server-Side)**: For personalized or real-time content
 - **CSR (Client-Side)**: For highly interactive, user-specific data
-- Document rendering mode choices in code comments
+- Document rendering mode choices clearly in code comments, but never include secrets (API keys, tokens), credentials, or internal-only endpoints in comments
 
-### State Management and Context
-
-Optimize React context usage:
+### State Management and Context (Essential)
 - Split contexts by update frequency
 - Use context selectors to minimize re-renders
-- Consider external stores (Zustand, Jotai) for global state
-- Avoid prop drilling by using composition patterns
 - Keep context providers close to consumers
+- Avoid prop drilling by using composition patterns
+
+### Advanced State Patterns
+- Consider external stores (Zustand, Jotai) for global state
 
 ### Monitoring and Profiling
 

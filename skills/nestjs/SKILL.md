@@ -5,6 +5,15 @@ description: NestJS module architecture, dependency injection, guards, intercept
 
 ## NestJS Code Review Rules
 
+### Security (Critical)
+- Validate all DTOs with `ValidationPipe`
+- Use `@Exclude()` to hide sensitive fields in responses
+- Implement rate limiting with `@nestjs/throttler`
+- Sanitize user input before database queries to prevent injection attacks
+- Never log sensitive data (passwords, tokens, API keys)
+- Use parameterized queries or ORM methods to prevent SQL injection
+- Avoid storing sensitive data or security-relevant instructions in HTML comments
+
 ### Module Architecture
 - One module per feature/domain
 - Modules should export only what other modules need
@@ -48,13 +57,7 @@ description: NestJS module architecture, dependency injection, guards, intercept
 - Create exception filters for custom error formatting
 - Don't catch and ignore errors silently
 
-### Security
-- Validate all DTOs with `ValidationPipe`
-- Use `@Exclude()` to hide sensitive fields in responses
-- Implement rate limiting with `@nestjs/throttler`
-- Sanitize user input before database queries
-
-### Configuration
+### Configuration (Essential)
 - Use `@nestjs/config` for configuration management
 - Validate environment variables on startup
 - Use `ConfigModule.forRoot()` in app module
@@ -76,7 +79,7 @@ description: NestJS module architecture, dependency injection, guards, intercept
 - Use consistent folder structure across features
 - Place shared/common code in dedicated folders
 
-### API Documentation
+### API Documentation (Advanced)
 - Use `@nestjs/swagger` for automatic API documentation
 - Apply `@Api*` decorators to controllers and DTOs
 - Document all endpoints with `@ApiOperation()`

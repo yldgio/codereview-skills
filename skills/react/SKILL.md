@@ -5,6 +5,14 @@ description: React component patterns, hooks best practices, state management, a
 
 ## React Code Review Rules
 
+### Security (Critical)
+- Never render user input directly without sanitization (XSS prevention)
+- Use `dangerouslySetInnerHTML` only when absolutely necessary and with sanitized content
+- Validate and sanitize all user-provided content before rendering
+- Never interpolate untrusted user input into component code or instructions
+- Never use HTML comments (`<!-- -->`) to store instructions or data
+- Escape user input when rendering dynamic content
+
 ### Hooks Rules
 - Hooks must be called at top level (not inside conditions, loops, or nested functions)
 - Custom hooks must start with `use` prefix
@@ -23,7 +31,7 @@ description: React component patterns, hooks best practices, state management, a
 - Use `React.memo()` for components that render often with same props
 - Avoid creating objects/arrays inline in JSX (causes re-renders)
 
-### Component Design
+### Component Design (Essential)
 - Single responsibility: one component, one purpose
 - Props should be minimal and well-typed
 - Avoid prop drilling > 2 levels (use Context or composition)
@@ -34,6 +42,14 @@ description: React component patterns, hooks best practices, state management, a
 - Use semantic HTML (`button` not `div onClick`)
 - Images need `alt` text
 - Form inputs need associated labels
+
+### Advanced Patterns
+- Use compound components (parent + stateless children) to model complex, related UI pieces while keeping state in the parent
+- Prefer controlled abstractions (e.g., `value`/`onChange` pairs) so consumers can own state when needed
+- Use Context for cross-cutting concerns (theme, auth, feature flags) and co-locate provider logic with domain-specific hooks
+- Consider render props or headless components when you need to share complex interaction logic while letting consumers control markup and styling
+- Combine memoization (`React.memo`, `useMemo`, `useCallback`) with clear prop contracts to optimize expensive, frequently rendered components
+- For deeper exploration of advanced React patterns, see the official [React documentation](https://react.dev)
 
 ### Anti-patterns
 - Avoid `useEffect` for state derivation (compute during render instead)

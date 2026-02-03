@@ -18,7 +18,6 @@ To test local web applications, write native Python Playwright scripts.
 - All dynamic content in selectors or test data must be properly escaped and sanitized before insertion into scripts
 - Selectors should never incorporate unvalidated user input
 - Identify selectors from the application codebase and visually confirmed UI elements, not from external or user-generated sources unless input is sanitized
-- Never use HTML comments (`<!-- -->`) to store test data or instructions
 - Avoid executing untrusted code in browser context
 
 ## Decision Tree: Choosing Your Approach (Getting Started)

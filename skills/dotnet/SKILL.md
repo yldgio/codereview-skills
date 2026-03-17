@@ -1,11 +1,15 @@
 ---
 name: dotnet
 description: ASP.NET Core patterns, dependency injection, middleware, async/await, and security
+metadata:
+  version: "1.1.0"
 ---
 
 ## .NET Code Review Rules
 
 ### Security (Critical)
+- **Input Validation**: Validate and sanitize all user input using whitelisted input patterns, strong type checks, and context-aware escaping (HTML/SQL/command-line contexts). Apply strict validation before any rendering or database operation
+- **Comment Hygiene**: Never use HTML comments (`<!-- -->`) or template variables (e.g., `{{ }}`) to store sensitive data or security-relevant instructions. Ensure HTML comments are stripped from output before deployment
 - Use `[Authorize]` attribute with policies
 - Validate anti-forgery tokens for forms
 - Use parameterized queries (EF Core does this by default)
@@ -14,10 +18,8 @@ description: ASP.NET Core patterns, dependency injection, middleware, async/awai
 - Store secrets in Azure Key Vault or environment variables
 - Use User Secrets for local development
 - Never commit secrets to source control
-- Validate and sanitize all user input to prevent injection attacks
-- Avoid storing sensitive data or security-relevant instructions in HTML comments
 
-### Dependency Injection
+### Dependency Injection (Essential)
 - Register services with appropriate lifetime:
   - `Singleton`: stateless, thread-safe services
   - `Scoped`: per-request services (DbContext, etc.)
@@ -25,20 +27,22 @@ description: ASP.NET Core patterns, dependency injection, middleware, async/awai
 - Avoid captive dependencies (Singleton depending on Scoped)
 - Use `IOptions<T>` pattern for configuration
 
-### Async/Await
+### Async/Await (Essential)
 - Use `async`/`await` for I/O-bound operations (database, HTTP calls, file system)
 - Always pass `CancellationToken` and respect it
 - Avoid `.Result` or `.Wait()` (causes deadlocks)
 - Use `ConfigureAwait(false)` in library code
 
-### Advanced Async Patterns
+### Async/Await (Advanced)
 - Prefer `ValueTask` for hot paths that often complete synchronously
 
-### Controllers
+### Controllers (Essential)
 - Keep controllers thin (delegate to services)
 - Use `[ApiController]` attribute for automatic model validation
 - Return `ActionResult<T>` for type safety
 - Use `[ProducesResponseType]` for API documentation
+
+### Controllers (Advanced)
 - Implement API versioning (URL, header, or query string)
 - Use consistent versioning strategy across endpoints
 

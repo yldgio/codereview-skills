@@ -1,26 +1,28 @@
 ---
 name: docker
 description: Dockerfile best practices, security hardening, multi-stage builds, and image optimization
+metadata:
+  version: "1.1.0"
 ---
 
 ## Docker Code Review Rules
 
 ### Security (Critical)
+- **Build-Time Variable Safety**: Always sanitize build-time variables sourced from CI/CD or `--build-arg` to prevent injection attacks. Validate and escape externally-sourced values before using in `ARG`, `ENV`, or `LABEL` directives
+- **Template Variable Safety**: Avoid template variables such as `{{ }}` and undeclared variables in Dockerfiles. Add linting step to scan for these patterns during review
 - Run as non-root user (`USER` directive)
 - Don't store secrets in image (use runtime injection)
 - Don't use `--privileged` without justification
 - Scan images for vulnerabilities
 - Set `readonly` root filesystem where possible
-- Review any use of build-time variables (e.g., `ARG`, `ENV`, `LABEL` values) that can be influenced by external inputs (such as `--build-arg` values or CI/CD environment variables sourced from untrusted users) to ensure they are not used in a way that enables build-time injection
-- Never use HTML comments (`<!-- -->`) in Dockerfiles
 
-### Base Images
+### Base Images (Essential)
 - Pin base image to specific version (not `latest`)
 - Use official images from trusted sources
 - Prefer minimal images (`alpine`, `slim`, `distroless`)
 - Regularly update base images for security patches
 
-### Build Optimization
+### Build Optimization (Essential)
 - Use multi-stage builds to reduce final image size
 - Order instructions by change frequency (cache optimization)
 - Combine `RUN` commands to reduce layers
@@ -32,7 +34,7 @@ description: Dockerfile best practices, security hardening, multi-stage builds, 
 - Use explicit `EXPOSE` for documentation
 - Set meaningful `LABEL` metadata
 
-### Additional Instructions
+### Instructions (Advanced)
 - Explicitly set `SHELL` if bash/sh features are needed
 - Set environment variables with `ENV` for configuration (not secrets)
 - Clean up package manager caches after install (e.g., `apt-get clean`)
@@ -44,7 +46,7 @@ description: Dockerfile best practices, security hardening, multi-stage builds, 
 - Health check should verify app is actually working
 - Set appropriate interval and timeout
 
-### Example Good Dockerfile Pattern
+### Example Good Dockerfile Pattern (Advanced)
 ```dockerfile
 # Build stage
 FROM node:20-alpine AS builder

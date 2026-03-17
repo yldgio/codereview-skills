@@ -1,31 +1,36 @@
 ---
 name: react
 description: React component patterns, hooks best practices, state management, and performance optimization
+metadata:
+  version: "1.1.0"
 ---
 
 ## React Code Review Rules
 
 ### Security (Critical)
+- **Input Sanitization**: All user-supplied content must be escaped and validated. Always escape variables in output, especially when inserted into code or comments
+- **Template Variable Safety**: Never use template variables (`{{ }}`) in code or documentation. All variables must be carefully declared, validated, and typed. Disallow undeclared or untyped variables
+- **Comment Hygiene**: Never use HTML comments (`<!-- -->`) to store instructions or data. Scan for all HTML comment patterns and require output auto-escaping when handling template variables
+- **Dynamic Output**: Validate and sanitize all user-supplied or dynamic variables before insertion into code, templates, or client output. Use strict allow-lists and escaping functions
 - Never render user input directly without sanitization (XSS prevention)
 - Use `dangerouslySetInnerHTML` only when absolutely necessary and with sanitized content
 - Validate and sanitize all user-provided content before rendering
 - Never interpolate untrusted user input into component code or instructions
-- Never use HTML comments (`<!-- -->`) to store instructions or data
 - Escape user input when rendering dynamic content
 
-### Hooks Rules
+### Hooks Rules (Essential)
 - Hooks must be called at top level (not inside conditions, loops, or nested functions)
 - Custom hooks must start with `use` prefix
 - `useEffect` must have correct dependency array (no missing/extra deps)
 - `useEffect` cleanup functions must be returned for subscriptions/timers
 
-### State Management
+### State Management (Essential)
 - State should be as local as possible (don't lift prematurely)
 - Avoid redundant state (derive values instead of storing)
 - Use `useReducer` for complex state logic with multiple sub-values
 - Prefer controlled components over uncontrolled (except file inputs)
 
-### Performance
+### Performance (Essential)
 - Wrap expensive computations in `useMemo`
 - Stabilize callbacks with `useCallback` when passed to memoized children
 - Use `React.memo()` for components that render often with same props

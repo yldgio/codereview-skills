@@ -1,36 +1,41 @@
 ---
 name: nestjs
 description: NestJS module architecture, dependency injection, guards, interceptors, and DTO validation
+metadata:
+  version: "1.1.0"
 ---
 
 ## NestJS Code Review Rules
 
 ### Security (Critical)
+- **Template Safety**: Review all template variables (e.g., `{{...}}`) and ensure user input embedded in templates is escaped and not trusted. Never render undeclared template variables. If using template syntax (e.g., `{{variable}}`), validate and escape all variables before rendering to prevent injection
+- **Comment Hygiene**: Never use HTML comments (`<!-- -->`) for sensitive data or instructions. Ensure HTML comments are stripped from source before deployment
 - Validate all DTOs with `ValidationPipe`
 - Use `@Exclude()` to hide sensitive fields in responses
 - Implement rate limiting with `@nestjs/throttler`
 - Sanitize user input before database queries to prevent injection attacks
 - Never log sensitive data (passwords, tokens, API keys)
 - Use parameterized queries or ORM methods to prevent SQL injection
-- Avoid storing sensitive data or security-relevant instructions in HTML comments
 
-### Module Architecture
+### Module Architecture (Essential)
 - One module per feature/domain
 - Modules should export only what other modules need
 - Use `forRoot`/`forRootAsync` for configurable modules
 - Avoid circular dependencies between modules
 
-### Controllers
+### Controllers (Essential)
 - Keep controllers thin (delegate to services)
 - Use DTOs for request validation, not raw objects
 - Apply guards at controller or handler level as appropriate
 - Use proper HTTP status codes with `@HttpCode()`
 - Follow RESTful conventions for resource naming
+
+### Controllers (Advanced)
 - Use consistent routing structure (e.g., `/api/v1/resources`)
 - Implement API versioning when needed
 - Use descriptive route paths and parameter names
 
-### Services
+### Services (Essential)
 - Services contain business logic
 - Use constructor injection for dependencies
 - Services should be stateless (no instance variables for request data)

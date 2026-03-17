@@ -1,20 +1,23 @@
 ---
 name: github-actions
 description: GitHub Actions workflow security, performance optimization, and best practices
+metadata:
+  version: "1.1.0"
 ---
 
 ## GitHub Actions Code Review Rules
 
 ### Security (Critical)
+- **Expression Safety**: Always sanitize or restrict values injected into `${{ }}` expressions. Escape or validate all user-provided data before use. Never interpolate untrusted user input
+- **Variable Exposure**: Do not expose or output `${{ }}` expressions in workflow logs or error messages. Ensure all variables are declared and sourced safely
+- **Secret Management**: Never echo secrets or use them in URLs as this can result in inadvertent disclosure. Always review log output and sanitize URLs to prevent leaks
 - Pin actions to full commit SHA (not `@v1` or `@main`)
 - Use minimal `permissions` block (principle of least privilege)
-- Never echo secrets or use them in URLs
 - Use `secrets.GITHUB_TOKEN` instead of PATs when possible
 - Audit third-party actions before use
-- Review expressions (`${{ }}`) for injection risks; never interpolate untrusted user input
 - Validate all inputs to reusable workflows and custom actions
 
-### Permissions
+### Permissions (Essential)
 ```yaml
 permissions:
   contents: read  # Minimal by default
@@ -23,26 +26,30 @@ permissions:
   # issues: write
 ```
 
-### Secrets
+### Secrets (Essential)
 - Store secrets in repository/organization secrets
 - Use environments for production secrets with approvals
 - Don't pass secrets as command arguments (visible in logs)
 - Mask sensitive output with `::add-mask::`
 - **Never write secrets to files or artifacts** (can be exposed)
+
+### Secrets (Advanced)
 - Avoid passing secrets via environment variables unless absolutely required
 - Secrets in env vars can be visible in process listings
 
-### Performance
+### Performance (Essential)
 - Use caching for dependencies (`actions/cache` or built-in)
 - Run independent jobs in parallel
 - Use `concurrency` to cancel redundant runs
 - Consider self-hosted runners for heavy workloads
 
-### Workflow Structure
+### Workflow Structure (Essential)
 - Use reusable workflows for common patterns
 - Use composite actions for shared steps
 - Set appropriate `timeout-minutes` to prevent hung jobs
 - Use `if:` conditions to skip unnecessary jobs
+
+### Workflow Structure (Advanced)
 - Separate CI (testing), CD (deployments), and PR checks into distinct workflows
 - Use environments to distinguish between dev, staging, and production
 - Avoid mixing all concerns in a single monolithic workflow

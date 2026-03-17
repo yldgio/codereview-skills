@@ -4,7 +4,7 @@ description: React and Next.js performance optimization guidelines from Vercel E
 license: MIT
 metadata:
   author: vercel
-  version: "1.0.0"
+  version: "1.1.0"
   source: https://github.com/vercel-labs/agent-skills
 ---
 
@@ -15,10 +15,11 @@ Comprehensive performance optimization guide for React and Next.js applications,
 ## Security Notice (Critical)
 
 **IMPORTANT: Code security must be maintained during performance optimization.**
+- **Input Validation**: User-supplied content (for serialization, code evaluation, or comments) must be escaped and validated. Always escape variables in output, especially when inserted into code or comments
+- **Template Variable Safety**: Scan for and reject HTML comment patterns (`<!-- -->`). Require output auto-escaping when handling template variables like `{{}}`. Validate and sanitize all user-supplied or dynamic variables before insertion into code, templates, or client output using strict allow-lists and escaping functions
+- **Dynamic Output**: The term "validate all dynamic output" means: validate and sanitize all user-supplied or dynamic variables before insertion into code, templates, or client output. Use strict allow-lists and escaping functions
 - Never expose sensitive data when optimizing data serialization
 - Sanitize user-supplied code before rendering or evaluation
-- Validate all dynamic output to prevent injection attacks
-- Never use HTML comments (`<!-- -->`) to store sensitive information
 - Avoid direct evaluation or insertion of code samples without validation
 
 ## When to Apply

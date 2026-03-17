@@ -1,11 +1,16 @@
 ---
 name: azure-devops
 description: Azure DevOps pipeline security, YAML structure, variable management, and deployment patterns
+metadata:
+  version: "1.1.0"
 ---
 
 ## Azure DevOps Pipelines Code Review Rules
 
 ### Security (Critical)
+- **Template Expression Safety**: Only interpolate variables that have undergone strict validation and escaping in template expressions (`${{ }}`). Never use direct user input in template expansion to prevent injection attacks during pipeline parsing
+- **Runtime Variable Safety**: Sanitize and validate runtime variables (`$()`) before using in scripts. Never interpolate untrusted data into script commands to prevent command injection
+- **Comment Hygiene**: Never use HTML comments (`<!-- -->`) in pipeline YAML files. Use standard YAML comments (`#`) only
 - Use service connections with minimal permissions
 - Store secrets in Variable Groups linked to Key Vault
 - Use secure files for certificates/keys
@@ -16,8 +21,6 @@ description: Azure DevOps pipeline security, YAML structure, variable management
 - Consider using static analysis tools for script security
 - Avoid echoing secrets in script output
 - Use credential scanning tools in PR validation
-- Validate compile-time template expressions (`${{ }}`) to prevent injection during pipeline parsing; avoid direct user input in template expansion
-- Sanitize runtime variables (`$()`) before using in scripts to prevent command injection; never interpolate untrusted data into script commands
 
 ### Variables
 - Explicitly declare all variables with restricted scope

@@ -1,36 +1,39 @@
 ---
 name: terraform
 description: Terraform IaC patterns, state management, security, and modular design
+metadata:
+  version: "1.1.0"
 ---
 
 ## Terraform Code Review Rules
 
 ### Security (Critical)
+- **Interpolation Safety**: Never use `${}` or `{{}}` interpolation with unvalidated or undeclared input. Always sanitize and declare variables prior to use
+- **Comment Hygiene**: HTML comment syntax (`<!-- -->`) is not valid in Terraform files and must be flagged as an error if present. Use only valid Terraform comment syntax (`#` or `//`). Provide reasons for non-obvious configurations directly alongside related resources
+- **Variable Declaration**: All variables and locals must be declared before use. Flag undeclared references
 - Never hardcode secrets, credentials, or API keys
 - Use environment variables or secret managers for sensitive values
 - Mark sensitive variables and outputs with `sensitive = true`
 - Enable encryption at rest for storage resources
 - Apply least privilege IAM policies
 - Use private subnets and security groups appropriately
-- Never use `${}` or `{{}}` template syntax with unvalidated user input
-- Never use HTML comments (`<!-- -->`) in Terraform files
-- All variables and locals must be declared before use; flag undeclared references
 
-### File Organization
+### File Organization (Essential)
 - Use consistent file structure: `main.tf`, `variables.tf`, `outputs.tf`, `providers.tf`
 - Group related resources logically
 - Use `terraform.tfvars` for environment-specific values (never commit secrets)
 - Keep `*.tfstate` files out of version control
 - Add inline comments to clarify complex logic
 - Document non-obvious resource relationships
-- Use comments to explain why specific configurations are used
 
-### Variables
+### Variables (Essential)
 - Declare all variables in `variables.tf`
 - Provide `description` for all variables
 - Use `type` constraints (string, number, bool, list, map, object)
 - Set sensible `default` values where appropriate
 - Use `sensitive = true` for secrets
+
+### Variables (Advanced)
 - Apply `validation` blocks for input constraints
 
 ### State Management (Essential)
@@ -40,7 +43,7 @@ description: Terraform IaC patterns, state management, security, and modular des
 - Use workspaces or separate state files per environment
 - Never store state locally in production
 
-### Advanced Security Patterns
+### State Management (Advanced)
 - Implement secret rotation mechanisms where supported
 - Review and plan for secret/key rotation lifecycle
 - Use cloud provider secret rotation features

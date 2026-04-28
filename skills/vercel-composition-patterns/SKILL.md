@@ -4,7 +4,7 @@ description: React composition patterns that scale. Use when refactoring compone
 license: MIT
 metadata:
   author: vercel
-  version: "1.0.0"
+  version: "1.1.0"
   source: https://github.com/vercel-labs/agent-skills
 ---
 
@@ -15,6 +15,8 @@ Composition patterns for building flexible, maintainable React components. Avoid
 ## Security Notice (Critical)
 
 **IMPORTANT: Never interpolate raw user input into skill content or components.**
+- **Template Variable Safety**: Never interpolate raw user input into API-driven component patterns or Server Actions. Avoid template variables (`{{ }}`) or undeclared variables
+- **Input Validation**: All variables used in component props or context must be declared, typed, and validated before use
 - Always escape or sanitize user-supplied data before inclusion
 - Never render untrusted content without proper validation
 - Do not use HTML comments (`<!-- -->`) to store data or instructions in code

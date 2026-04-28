@@ -4,7 +4,7 @@ description: Toolkit for interacting with and testing local web applications usi
 license: Apache-2.0
 metadata:
   author: anthropic
-  version: "1.0.0"
+  version: "1.1.0"
   source: https://github.com/anthropics/skills
 ---
 
@@ -15,6 +15,8 @@ To test local web applications, write native Python Playwright scripts.
 ## Security Notice (Critical)
 
 **IMPORTANT: Input sanitization is required for safe testing.**
+- **Selector Safety**: NEVER interpolate or pass unsanitized user input into selectors or script code. Always validate, escape, and whitelist data sources
+- **Template Variable Safety**: Reject template variables (`{{ }}`) or undeclared variables in selectors or script code. Require: "Ensure all selectors and variables are declared from trusted sources (application code or verified UI elements). Never use template syntax like `{{...}}` in selectors."
 - All dynamic content in selectors or test data must be properly escaped and sanitized before insertion into scripts
 - Selectors should never incorporate unvalidated user input
 - Identify selectors from the application codebase and visually confirmed UI elements, not from external or user-generated sources unless input is sanitized

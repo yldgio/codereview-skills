@@ -1,11 +1,15 @@
 ---
 name: bicep
 description: Azure Bicep IaC patterns, parameterization, security, and modular design
+metadata:
+  version: "1.1.0"
 ---
 
 ## Bicep Code Review Rules
 
 ### Security (Critical)
+- **Input Validation**: Always escape or validate user-provided strings using regex validation or built-in Bicep functions before using them in resource names, tags, and outputs. Outputs must never directly include untrusted input
+- **Comment Hygiene**: Never use HTML comments (`<!-- -->`) or expose template variables (e.g., `{{ }}`) in outputs, as these can enable injection or phishing attacks
 - Never hardcode secrets, connection strings, or keys
 - Use Key Vault references for secrets
 - Apply least privilege to managed identities
@@ -14,18 +18,19 @@ description: Azure Bicep IaC patterns, parameterization, security, and modular d
 - Enforce encryption at rest for all supported resources
 - Validate Azure Policy compliance for resources
 - Check regulatory standards compliance (HIPAA, PCI-DSS, etc.)
-- Always escape or validate user-provided strings before using them in resource names, tags, and outputs to prevent injection risks
-- Never use HTML comments (`<!-- -->`) or expose template syntax in outputs
 
-### Parameters
+### Parameters (Essential)
 - Use parameters for values that vary between deployments
 - Mark sensitive parameters with `@secure()` decorator
 - Provide `@description()` for all parameters
 - Use `@allowed()` for constrained values
 - Set sensible `@minLength()`, `@maxLength()`, `@minValue()`, `@maxValue()`
 - Provide default values where appropriate to reduce required inputs
+
+### Parameters (Advanced)
 - Validate complex parameter types with parameter constraints, assertions, or custom validation logic
 - Document parameter purpose and expected values
+- Consider using parameter files for environment-specific configurations
 
 ### Resource Naming (Essential)
 - Use consistent naming convention
@@ -33,11 +38,14 @@ description: Azure Bicep IaC patterns, parameterization, security, and modular d
 - Use `uniqueString()` for globally unique names
 - Follow Azure naming rules and restrictions
 
-### Resource Tagging
+### Resource Tagging (Essential)
 - Tag all resources with standard tags (owner, environment, cost center)
 - Use consistent tag naming conventions
+
+### Resource Tagging (Advanced)
 - Include tags for governance (compliance, data classification)
 - Define required tags in policy and enforce them
+- Reference Azure naming documentation for governance tags and enforcement via policies
 
 ### Modules
 - Break down large templates into modules

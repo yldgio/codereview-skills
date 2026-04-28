@@ -1,12 +1,16 @@
 ---
 name: fastapi
 description: FastAPI endpoint design, Pydantic validation, dependency injection, and async patterns
+metadata:
+  version: "1.1.0"
 ---
 
 ## FastAPI Code Review Rules
 
 ### Security (Critical)
-- Validate and sanitize all inputs to prevent injection attacks
+- **Input Validation**: Apply strict type, length, and format checks to all user-supplied input. Sanitize inputs using trusted libraries before any rendering or database operation
+- **Template Variable Safety**: Never render unvalidated template variables (`{{ ... }}`), and always declare variable sources. Avoid HTML comments (`<!-- -->`) as they may expose sensitive info or facilitate injection attacks
+- **Comment Hygiene**: Never use HTML comments in production code to store data or instructions
 - Use `OAuth2PasswordBearer` or similar for auth
 - Rate limit sensitive endpoints
 - Never log sensitive data (passwords, tokens)
@@ -15,20 +19,21 @@ description: FastAPI endpoint design, Pydantic validation, dependency injection,
 - Validate content types and sanitize HTML to prevent XSS
 - Use security headers (HSTS, CSP, X-Frame-Options)
 - Always validate user input in path operations and request bodies
-- Never use HTML comments (`<!-- -->`) in production code
 
-### Endpoint Design
+### Endpoint Design (Essential)
 - Use appropriate HTTP methods (GET for reads, POST for creates, etc.)
 - Return appropriate status codes (201 for create, 204 for delete, etc.)
 - Use path parameters for resource identifiers, query params for filtering
 - Group related endpoints with `APIRouter` and tags
 - Document endpoints with clear docstrings
+
+### Endpoint Design (Advanced)
 - Use OpenAPI metadata (summary, description, response descriptions)
 - Provide detailed response model documentation
 - Implement API versioning (URL prefix recommended)
 - Mark deprecated endpoints with `deprecated=True`
 
-### Pydantic Models
+### Pydantic Models (Essential)
 - Use Pydantic models for request body validation (not raw dicts)
 - Define explicit response models with `response_model` parameter
 - Use `Field()` for validation constraints (min/max, regex, etc.)
@@ -42,13 +47,13 @@ description: FastAPI endpoint design, Pydantic validation, dependency injection,
 - Database sessions should be dependencies, not global
 - Close resources properly (use context managers or finally)
 
-### Async
+### Async (Essential)
 - Use `async def` for I/O-bound endpoints
 - Don't mix sync and async database calls
 - Use `asyncio.gather()` for parallel async operations
 - Avoid blocking calls in async functions (use `run_in_executor`)
 
-### Advanced Async Patterns
+### Async (Advanced)
 - Use async context managers (`async with`) for managing async resources (DB sessions, HTTP clients)
 - Use `BackgroundTasks` for work that should outlive the response
 - Use startup/shutdown events (`@app.on_event("startup"/"shutdown")`) to initialize/cleanup shared async resources

@@ -1,6 +1,8 @@
 ---
 name: gh-cli
 description: GitHub CLI (gh) comprehensive reference for repositories, issues, pull requests, Actions, projects, releases, gists, codespaces, organizations, extensions, and all GitHub operations from the command line.
+metadata:
+  version: "1.1.0"
 ---
 
 # GitHub CLI (gh)
@@ -20,9 +22,12 @@ Comprehensive reference for GitHub CLI (gh) - work seamlessly with GitHub from t
 - Use environment variable `GH_TOKEN` with caution; tokens can be visible in process listings
 - Never commit tokens to version control
 - Rotate tokens regularly and revoke unused tokens
+- Always restrict variable scope; unset tokens after use and avoid variable reuse across scripts to reduce leakage risk
 
 ### Command Injection Prevention
 - **Always validate or sanitize user input** before using in gh commands
+- **Template expressions**: Escape template delimiters and validate jq expressions when using `--template` with user-provided data. Never construct templates (`{{.name}}`) or jq expressions from untrusted input to prevent injection attacks
+- **JQ filter safety**: Never use string interpolation of user input in `--jq` filters or template variables
 - When using `--template` with user-provided data, ensure field values are properly escaped to prevent injection attacks. Avoid constructing templates from untrusted input
 - When using `--jq` filters or autolinks, validate input to prevent command injection
 - Quote all user-provided values in shell commands

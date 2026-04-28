@@ -1,52 +1,53 @@
 ---
 name: angular
 description: Angular component architecture, RxJS patterns, change detection, and module organization
+metadata:
+  version: "1.1.0"
 ---
 
 ## Angular Code Review Rules
 
-### Security
-- Avoid `bypassSecurityTrust*` methods unless absolutely necessary; when used, require code comments justifying the bypass
-- Sanitize dynamic HTML with `DomSanitizer` only when needed; always prefer Angular's built-in sanitization
+### Security (Critical)
+- **Template Safety**: Never interpolate untrusted user input into templates (`{{ }}`) without escaping or sanitizing using Angular's built-in mechanisms (DomSanitizer APIs). Always validate and escape any dynamic input before rendering
+- **[innerHTML] Binding**: If using `[innerHTML]`, always sanitize input with DomSanitizer and add a code comment explaining why. Never bind raw user input directly
+- **DomSanitizer Usage**: Use `DomSanitizer` only after rigorous validation. Example safe usage:
+  ```typescript
+  // Safe: Sanitized HTML from trusted CMS after validation
+  this.sanitizedContent = this.sanitizer.sanitize(SecurityContext.HTML, trustedCmsContent);
+  ```
+- Avoid `bypassSecurityTrust*` methods unless absolutely necessary; when used, require code comments justifying the bypass and document the validation applied
 - Validate route parameters and query strings to prevent injection attacks
 - Use Angular's built-in CSRF protection with HttpClient
 - Validate and sanitize data before binding it in templates, especially when displaying user-generated content in `*ngFor` loops or other directives
-- Never interpolate untrusted user input into templates without proper sanitization
+- Never use HTML comments (`<!-- -->`) to store sensitive data or instructions in templates
+
+### Components (Essential)
+- Use `OnPush` change detection strategy for performance
+- Inputs should be immutable (don't mutate input objects)
+- Use `trackBy` function with `*ngFor` for lists
+- Prefer standalone components for new code (Angular 14+)
+
+### Templates (Essential)
+- Avoid complex logic in templates (use getters or pipes)
+- Use `ng-container` for structural directives without extra DOM
+- Never use dynamic HTML with `[innerHTML]` without proper sanitization; review all XSS risks
+
+### Services (Essential)
+- Services should be `providedIn: 'root'` unless scoped to feature
+- Use dependency injection, don't instantiate services manually
+- HTTP calls belong in services, not components
+
+### RxJS (Essential)
+- Always unsubscribe (use `takeUntilDestroyed()`, `async` pipe, or `DestroyRef`)
+- Avoid nested subscribes (use `switchMap`, `mergeMap`, `concatMap`)
+- Use `shareReplay` for HTTP calls that multiple subscribers need
+- Handle errors with `catchError` (don't let errors kill the stream)
 
 ### Module Organization
 - Feature modules should be lazy-loaded where possible
 - Use `SharedModule` for reusable components/pipes/directives. Explicitly define exports to make the module's public API clear
 - Use `CoreModule` for singleton services (provided in root); import only once in AppModule
 - Avoid circular module dependencies
-
-### Components
-- Use `OnPush` change detection strategy for performance
-- Inputs should be immutable (don't mutate input objects)
-- Use `trackBy` function with `*ngFor` for lists
-- Prefer standalone components for new code (Angular 14+)
-
-### RxJS
-- Always unsubscribe (use `takeUntilDestroyed()`, `async` pipe, or `DestroyRef`)
-- Avoid nested subscribes (use `switchMap`, `mergeMap`, `concatMap`)
-- Use `shareReplay` for HTTP calls that multiple subscribers need
-- Handle errors with `catchError` (don't let errors kill the stream)
-
-### Services
-- Services should be `providedIn: 'root'` unless scoped to feature
-- Use dependency injection, don't instantiate services manually
-- HTTP calls belong in services, not components
-
-### Templates
-- Avoid complex logic in templates (use getters or pipes)
-- Use `ng-container` for structural directives without extra DOM
-- Never use dynamic HTML with `[innerHTML]` without proper sanitization; review all XSS risks
-
-### Testing
-- Use `@angular/testing` utilities (TestBed, ComponentFixture)
-- Write unit tests for components, services, and pipes
-- Mock dependencies in tests (don't use real HTTP calls)
-- Test component inputs/outputs and DOM interactions
-- Use `async` and `fakeAsync` for testing asynchronous code
 
 ### Type Safety
 - Enable strict TypeScript mode in tsconfig.json
@@ -61,6 +62,13 @@ description: Angular component architecture, RxJS patterns, change detection, an
 - Test with screen readers and accessibility tools
 - Maintain proper heading hierarchy (h1, h2, h3)
 - For advanced accessibility patterns, see [Angular Accessibility Guide](https://angular.io/guide/accessibility)
+
+### Testing
+- Use `@angular/testing` utilities (TestBed, ComponentFixture)
+- Write unit tests for components, services, and pipes
+- Mock dependencies in tests (don't use real HTTP calls)
+- Test component inputs/outputs and DOM interactions
+- Use `async` and `fakeAsync` for testing asynchronous code
 
 ### State Management (Advanced)
 - Use NgRx or Akita for complex shared state
